@@ -17,19 +17,37 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-import data from './users.json'
-// import { useState } from "react"
+import { FormEvent, useState } from "react"
+// import { loginUser } from "@/actions/loginUser"
+import { signIn } from "next-auth/react";
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
 
+    interface LoginData {
+        login: string,
+        password: string,
+    }
 
-    // const [formData, setFormData] = useState()
+    const [formData, setFormData] = useState<LoginData>({
+        login: "",
+        password: "",
+    })
 
-    console.log(data);
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
 
+        const result = await signIn('credentials', {
+            redirect: true,
+            callbackUrl: '/dashboard',
+            login: formData.login,
+            password: formData.password,
+        });
+
+        return result;
+    };
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -41,7 +59,7 @@ export function LoginForm({
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <FieldGroup>
                             <Field>
                                 <FieldLabel htmlFor="login">Ваш логин</FieldLabel>
@@ -49,6 +67,8 @@ export function LoginForm({
                                     id="login"
                                     type="text"
                                     placeholder="Логин"
+                                    value={formData.login}
+                                    onChange={(e) => { setFormData({ ...formData, login: e.target.value }) }}
                                     required
                                 />
                             </Field>
@@ -56,7 +76,7 @@ export function LoginForm({
                                 <div className="flex items-center">
                                     <FieldLabel htmlFor="password">Пароль</FieldLabel>
                                 </div>
-                                <Input id="password" type="password" placeholder="Пароль" required />
+                                <Input id="password" value={formData.password} type="password" placeholder="Пароль" required onChange={(e) => { setFormData({ ...formData, password: e.target.value }) }} />
                             </Field>
                             <Field>
                                 <Button type="submit">Login</Button>
