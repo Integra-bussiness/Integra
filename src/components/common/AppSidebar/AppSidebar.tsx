@@ -8,9 +8,7 @@ import { Building, ChevronDown, ChevronUp, HomeIcon, User, Users } from "lucide-
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-type Props = {}
-
-export default function AppSidebar({ }: Props) {
+export default function AppSidebar() {
 
     const pathname = usePathname()
 
@@ -24,7 +22,7 @@ export default function AppSidebar({ }: Props) {
             title: 'CRM',
             url: "/clients",
             icon: Users
-        },
+        }
     ]
 
     return (
