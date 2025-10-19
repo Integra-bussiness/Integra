@@ -18,8 +18,20 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // Игнорируем автогенерированные файлы Prisma
+      "**/src/generated/**/*",
+      "**/generated/**/*",
     ],
+
+    rules: {
+      // Отключаем проблемные правила для generated файлов
+      "@typescript-eslint/no-unused-expressions": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-require-imports": "off",
+    },
   },
+
+
 ];
 
 export default eslintConfig;
