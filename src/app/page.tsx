@@ -1,7 +1,11 @@
-import { Button } from "@/components/ui/button";
+import { LoginForm } from "@/components/ux/login/login-form";
 
 export default function Home() {
   return (
-    <Button className="bg-grad-deep-sky animate-in ">Синхронизировать</Button>
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <LoginForm />
+      </div>
+    </div>
   );
 }

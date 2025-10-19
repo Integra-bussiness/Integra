@@ -31,7 +31,7 @@ export default function AppSidebar({ }: Props) {
         <Sidebar collapsible="icon">
             <SidebarHeader className="font-bold font text-xl flex gap-[10px] items-center flex-row">
                 <Building />
-                <span>Integra</span>
+                <span >Integra</span>
             </SidebarHeader>
             <SidebarContent>
                 <Collapsible>

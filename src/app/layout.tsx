@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
 import "./globals.css";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/common/AppSidebar/AppSidebar";
 import { siteConfig } from "@/config/siteConfig";
+
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -29,18 +28,7 @@ export default function RootLayout({
       <body
         className={`${rubik.variable} antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <header className="border-1 p-[10px]">
-              <SidebarTrigger />
-            </header>
-            <main className="pl-[20px] pt-[10px] h-full">
-              {children}
-            </main>
-            <footer>123</footer>
-          </SidebarInset>
-        </SidebarProvider>
+        {children}
       </body>
     </html >
   );

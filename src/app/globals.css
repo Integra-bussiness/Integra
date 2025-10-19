@@ -149,7 +149,7 @@
   }
 }
 
-.gradient-text {
+@utility gradient-text {
   background: var(--grad-text);
   -webkit-background-clip: text;
   background-clip: text;
@@ -158,6 +158,10 @@
 
 .gradient-border {
   position: relative;
+}
+
+.gradient-btn {
+  transition: all .3s;
 }
 
 .gradient-border::before {
@@ -173,4 +177,180 @@
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
+}
+
+@utility btn-grad-base {
+  background-image: linear-gradient(var(--btn-deg), var(--btn-c1) 0%, var(--btn-c2) 50%, var(--btn-c3) 100%);
+  transition: --btn-deg .35s ease, --btn-c1 .35s ease, --btn-c2 .35s ease, --btn-c3 .35s ease, color .2s ease;
+  color: var(--btn-fg, currentColor);
+}
+
+@property --btn-deg {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 135deg;
+}
+
+@property --btn-c1 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #0000;
+}
+
+@property --btn-c2 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #0000;
+}
+
+@property --btn-c3 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #0000;
+}
+
+@property --btn-fg {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: currentColor;
+}
+
+/* Базовый генератор: один линейный градиент + плавные переходы переменных */
+@utility btn-grad-base {
+  background-image: linear-gradient(var(--btn-deg), var(--btn-c1) 0%, var(--btn-c2) 50%, var(--btn-c3) 100%);
+  transition: --btn-deg .35s ease, --btn-c1 .35s ease, --btn-c2 .35s ease, --btn-c3 .35s ease, color .2s ease;
+  color: var(--btn-fg, currentColor);
+}
+
+/* --------- OCEAN (насыщённый) --------- */
+@utility btn-ocean {
+  --btn-deg: 135deg;
+  --btn-c1: #38bdf8;
+  --btn-c2: #2563eb;
+  --btn-c3: #4338ca;
+  --btn-fg: #fff;
+  @apply btn-grad-base;
+
+  .dark & {
+    --btn-c1: #0ea5e9;
+    --btn-c2: #1d4ed8;
+    --btn-c3: #3730a3;
+  }
+}
+
+@utility btn-ocean-hover {
+  --btn-deg: 140deg;
+  --btn-c1: #60a5fa;
+  --btn-c2: #3b82f6;
+  --btn-c3: #6366f1;
+  --btn-fg: #fff;
+
+  .dark & {
+    --btn-c1: #0ea5e9;
+    --btn-c2: #3b82f6;
+    --btn-c3: #4f46e5;
+  }
+}
+
+/* --------- DEEP SKY (чуть спокойнее) --------- */
+@utility btn-deep-sky {
+  --btn-deg: 45deg;
+  --btn-c1: #3b82f6;
+  --btn-c2: #4f46e5;
+  --btn-c3: #4f46e5;
+  --btn-fg: #fff;
+  @apply btn-grad-base;
+
+  .dark & {
+    --btn-c1: #2563eb;
+    --btn-c2: #4338ca;
+    --btn-c3: #4338ca;
+  }
+}
+
+@utility btn-deep-sky-hover {
+  --btn-c1: #60a5fa;
+  --btn-c2: #6366f1;
+  --btn-c3: #6366f1;
+  --btn-fg: #fff;
+
+  .dark & {
+    --btn-c1: #3b82f6;
+    --btn-c2: #6366f1;
+    --btn-c3: #6366f1;
+  }
+}
+
+/* --------- AZURE MIST (светлый, пастель) --------- */
+@utility btn-azure {
+  --btn-deg: 180deg;
+  --btn-c1: #e0f2fe;
+  --btn-c2: #dbeafe;
+  --btn-c3: #e0e7ff;
+  --btn-fg: var(--foreground);
+  @apply btn-grad-base;
+
+  .dark & {
+    --btn-c1: #0b1220;
+    --btn-c2: #0c1324;
+    --btn-c3: #0d1528;
+    --btn-fg: #e6e6e6;
+  }
+}
+
+@utility btn-azure-hover {
+  --btn-c1: #dbeafe;
+  --btn-c2: #dbeafe;
+  --btn-c3: #e0e7ff;
+
+  .dark & {
+    --btn-c1: #0a0f1b;
+    --btn-c2: #0b1220;
+    --btn-c3: #0c1424;
+  }
+}
+
+/* --------- MIDNIGHT GLASS (полупрозрачный) --------- */
+@utility btn-midnight {
+  --btn-deg: 135deg;
+  --btn-c1: rgba(59, 130, 246, .20);
+  --btn-c2: rgba(79, 70, 229, .20);
+  --btn-c3: rgba(14, 165, 233, .20);
+  --btn-fg: #fff;
+  @apply btn-grad-base;
+
+  /* стеклянность опционально добавляй утилитами Tailwind */
+  /* @apply backdrop-blur-md border border-white/10; */
+  .dark & {
+    --btn-c1: rgba(59, 130, 246, .18);
+    --btn-c2: rgba(79, 70, 229, .18);
+    --btn-c3: rgba(14, 165, 233, .18);
+  }
+}
+
+@utility btn-midnight-hover {
+  --btn-c1: rgba(59, 130, 246, .28);
+  --btn-c2: rgba(79, 70, 229, .28);
+  --btn-c3: rgba(14, 165, 233, .28);
+
+  .dark & {
+    --btn-c1: rgba(59, 130, 246, .30);
+    --btn-c2: rgba(79, 70, 229, .30);
+    --btn-c3: rgba(14, 165, 233, .30);
+  }
+}
+
+/* (опционально) небольшие тактильные эффекты */
+@utility btn-press {
+  &:active {
+    filter: brightness(.95);
+    transform: translateY(0.5px);
+  }
+}
+
+@utility btn-focus {
+  &:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--ring), white 10%);
+    outline-offset: 2px;
+  }
 }
