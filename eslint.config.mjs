@@ -1,6 +1,6 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import { FlatCompat } from '@eslint/eslintrc';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -10,28 +10,37 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  // Игнорируем файлы ПЕРВЫМ блоком (это важно!)
   {
     ignores: [
-      "node_modules/**",
-      ".next/**",
-      "out/**",
-      "build/**",
-      "next-env.d.ts",
-      // Игнорируем автогенерированные файлы Prisma
-      "**/src/generated/**/*",
-      "**/generated/**/*",
+      '**/node_modules/**',
+      '**/.next/**',
+      '**/out/**',
+      '**/build/**',
+      '**/dist/**',
+      // Prisma generated files
+      '**/src/generated/**',
+      '**/generated/**',
+      '**/*.config.js',
+      '**/*.config.mjs',
     ],
-
+  },
+  // Основная конфигурация Next.js
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  // Переопределяем правила
+  {
     rules: {
-      // Отключаем проблемные правила для generated файлов
-      "@typescript-eslint/no-unused-expressions": "off",
-      "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/no-require-imports": "off",
+      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
-
-
 ];
 
 export default eslintConfig;
