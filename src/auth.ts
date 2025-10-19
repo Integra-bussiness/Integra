@@ -1,4 +1,3 @@
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./utils/prisma";
@@ -12,7 +11,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 login: { label: "Login", type: "text" },
                 password: { label: "Password", type: "password" },
             },
-            authorize: async (credentials, req) => {
+            authorize: async (credentials) => {
                 const user = await prisma.user.findFirst({ where: { login: credentials?.login } });
 
                 if (!user) {
