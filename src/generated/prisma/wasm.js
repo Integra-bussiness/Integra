@@ -5,13 +5,28 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientInitializationError,
+  PrismaClientValidationError,
+  getPrismaClient,
+  sqltag,
+  empty,
+  join,
+  raw,
+  skip,
   Decimal,
+  Debug,
   objectEnumValues,
   makeStrictEnum,
+  Extensions,
+  warnOnce,
+  defineDmmfProperty,
   Public,
   getRuntime,
-  skip
-} = require('./runtime/index-browser.js')
+  createParam,
+} = require('./runtime/wasm-engine-edge.js')
 
 
 const Prisma = {}
@@ -20,79 +35,35 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.15.0
- * Query Engine version: 85179d7826409ee107a6ba334b5e305ae3fba9fb
+ * Prisma Client JS version: 6.17.1
+ * Query Engine version: 272a37d34178c2894197e17273bf937f25acdeac
  */
 Prisma.prismaVersion = {
-  client: "6.15.0",
-  engine: "85179d7826409ee107a6ba334b5e305ae3fba9fb"
+  client: "6.17.1",
+  engine: "272a37d34178c2894197e17273bf937f25acdeac"
 }
 
-Prisma.PrismaClientKnownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientKnownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)};
-Prisma.PrismaClientUnknownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientUnknownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientRustPanicError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientRustPanicError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientInitializationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientInitializationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientValidationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientValidationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
+Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError
+Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError
+Prisma.PrismaClientInitializationError = PrismaClientInitializationError
+Prisma.PrismaClientValidationError = PrismaClientValidationError
 Prisma.Decimal = Decimal
 
 /**
  * Re-export of sql-template-tag
  */
-Prisma.sql = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`sqltag is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.empty = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`empty is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.join = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`join is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.raw = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`raw is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.sql = sqltag
+Prisma.empty = empty
+Prisma.join = join
+Prisma.raw = raw
 Prisma.validator = Public.validator
 
 /**
 * Extensions
 */
-Prisma.getExtensionContext = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.getExtensionContext is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.defineExtension = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.defineExtension is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.getExtensionContext = Extensions.getExtensionContext
+Prisma.defineExtension = Extensions.defineExtension
 
 /**
  * Shorthand utilities for JSON filtering
@@ -109,10 +80,11 @@ Prisma.NullTypes = {
 
 
 
+
+
 /**
  * Enums
  */
-
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
@@ -120,17 +92,107 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.UserScalarFieldEnum = {
+exports.Prisma.CompanyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  address: 'address',
+  contact_email: 'contact_email',
+  contact_phone: 'contact_phone',
+  created_at: 'created_at'
+};
+
+exports.Prisma.Activity_logsScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  action: 'action',
+  details: 'details',
+  created_at: 'created_at'
+};
+
+exports.Prisma.ClientsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  contact_email: 'contact_email',
+  contact_phone: 'contact_phone',
+  activity_status: 'activity_status',
+  purchase_history: 'purchase_history',
+  credit_rating: 'credit_rating'
+};
+
+exports.Prisma.FinancesScalarFieldEnum = {
+  id: 'id',
+  transaction_date: 'transaction_date',
+  type: 'type',
+  category: 'category',
+  account: 'account',
+  amount: 'amount',
+  description: 'description',
+  responsible_person: 'responsible_person'
+};
+
+exports.Prisma.KpisScalarFieldEnum = {
+  id: 'id',
+  category: 'category',
+  name: 'name',
+  target_value: 'target_value',
+  actual_value: 'actual_value',
+  forecast_value: 'forecast_value',
+  status: 'status'
+};
+
+exports.Prisma.Order_itemsScalarFieldEnum = {
+  id: 'id',
+  order_id: 'order_id',
+  product_id: 'product_id',
+  quantity: 'quantity',
+  price: 'price'
+};
+
+exports.Prisma.OrdersScalarFieldEnum = {
+  id: 'id',
+  client_id: 'client_id',
+  order_date: 'order_date',
+  status: 'status',
+  payment_method: 'payment_method',
+  delivery_method: 'delivery_method',
+  total_amount: 'total_amount'
+};
+
+exports.Prisma.ProductsScalarFieldEnum = {
+  id: 'id',
+  sku: 'sku',
+  name: 'name',
+  category: 'category',
+  supplier: 'supplier',
+  price: 'price',
+  stock: 'stock',
+  availability_status: 'availability_status'
+};
+
+exports.Prisma.ReportsScalarFieldEnum = {
+  id: 'id',
+  report_name: 'report_name',
+  generated_at: 'generated_at',
+  format: 'format',
+  related_tasks: 'related_tasks',
+  manager_id: 'manager_id'
+};
+
+exports.Prisma.SettingsScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value'
+};
+
+exports.Prisma.UsersScalarFieldEnum = {
   id: 'id',
   name: 'name',
   login: 'login',
   password: 'password',
-  companyId: 'companyId'
-};
-
-exports.Prisma.CompanyScalarFieldEnum = {
-  id: 'id',
-  companyName: 'companyName'
+  company_id: 'company_id',
+  role: 'role',
+  status: 'status',
+  created_at: 'created_at'
 };
 
 exports.Prisma.SortOrder = {
@@ -143,39 +205,102 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
-
-exports.Prisma.ModelName = {
-  User: 'User',
-  Company: 'Company'
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 
+
+exports.Prisma.ModelName = {
+  Company: 'Company',
+  activity_logs: 'activity_logs',
+  clients: 'clients',
+  finances: 'finances',
+  kpis: 'kpis',
+  order_items: 'order_items',
+  orders: 'orders',
+  products: 'products',
+  reports: 'reports',
+  settings: 'settings',
+  users: 'users'
+};
 /**
- * This is a stub Prisma Client that will error at runtime if called.
+ * Create the Client
  */
-class PrismaClient {
-  constructor() {
-    return new Proxy(this, {
-      get(target, prop) {
-        let message
-        const runtime = getRuntime()
-        if (runtime.isEdge) {
-          message = `PrismaClient is not configured to run in ${runtime.prettyName}. In order to run Prisma Client on edge runtime, either:
-- Use Prisma Accelerate: https://pris.ly/d/accelerate
-- Use Driver Adapters: https://pris.ly/d/driver-adapters
-`;
-        } else {
-          message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
-        }
-
-        message += `
-If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
-
-        throw new Error(message)
+const config = {
+  "generator": {
+    "name": "client",
+    "provider": {
+      "fromEnvVar": null,
+      "value": "prisma-client-js"
+    },
+    "output": {
+      "value": "C:\\Users\\Егор\\PhpstormProjects\\sisya\\src\\generated\\prisma",
+      "fromEnvVar": null
+    },
+    "config": {
+      "engineType": "library"
+    },
+    "binaryTargets": [
+      {
+        "fromEnvVar": null,
+        "value": "windows",
+        "native": true
       }
-    })
+    ],
+    "previewFeatures": [],
+    "sourceFilePath": "C:\\Users\\Егор\\PhpstormProjects\\sisya\\prisma\\schema.prisma",
+    "isCustomOutput": true
+  },
+  "relativeEnvPaths": {
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
+  },
+  "relativePath": "../../../prisma",
+  "clientVersion": "6.17.1",
+  "engineVersion": "272a37d34178c2894197e17273bf937f25acdeac",
+  "datasourceNames": [
+    "db"
+  ],
+  "activeProvider": "postgresql",
+  "postinstall": false,
+  "inlineDatasources": {
+    "db": {
+      "url": {
+        "fromEnvVar": "DATABASE_URL",
+        "value": null
+      }
+    }
+  },
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider  = \"postgresql\"\n  url       = env(\"DATABASE_URL\")\n  directUrl = env(\"DIRECT_URL\")\n}\n\nmodel Company {\n  id            Int       @id @default(autoincrement())\n  name          String    @db.VarChar(255)\n  address       String?\n  contact_email String?   @db.VarChar(255)\n  contact_phone String?   @db.VarChar(50)\n  created_at    DateTime? @default(now()) @db.Timestamp(6)\n  users         users[]\n\n  @@map(\"companies\")\n}\n\nmodel activity_logs {\n  id         Int       @id @default(autoincrement())\n  user_id    Int?\n  action     String?\n  details    String?\n  created_at DateTime? @default(now()) @db.Timestamp(6)\n}\n\nmodel clients {\n  id               Int      @id @default(autoincrement())\n  name             String\n  contact_email    String?\n  contact_phone    String?\n  activity_status  String?  @default(\"active\")\n  purchase_history String?\n  credit_rating    Int?     @default(0)\n  orders           orders[]\n}\n\nmodel finances {\n  id                 Int      @id @default(autoincrement())\n  transaction_date   DateTime @db.Timestamp(6)\n  type               String\n  category           String?\n  account            String?\n  amount             Decimal? @db.Decimal(15, 2)\n  description        String?\n  responsible_person String?\n}\n\nmodel kpis {\n  id             Int      @id @default(autoincrement())\n  category       String\n  name           String\n  target_value   Decimal? @db.Decimal(15, 2)\n  actual_value   Decimal? @db.Decimal(15, 2)\n  forecast_value Decimal? @db.Decimal(15, 2)\n  status         String?  @default(\"not_started\")\n}\n\nmodel order_items {\n  id         Int       @id @default(autoincrement())\n  order_id   Int?\n  product_id Int?\n  quantity   Int\n  price      Decimal   @db.Decimal(15, 2)\n  orders     orders?   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)\n  products   products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)\n}\n\nmodel orders {\n  id              Int           @id @default(autoincrement())\n  client_id       Int?\n  order_date      DateTime      @db.Timestamp(6)\n  status          String?       @default(\"created\")\n  payment_method  String?\n  delivery_method String?\n  total_amount    Decimal?      @db.Decimal(15, 2)\n  order_items     order_items[]\n  clients         clients?      @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction)\n}\n\nmodel products {\n  id                  Int           @id @default(autoincrement())\n  sku                 String        @unique\n  name                String\n  category            String?\n  supplier            String?\n  price               Decimal?      @db.Decimal(15, 2)\n  stock               Int?          @default(0)\n  availability_status String?       @default(\"in_stock\")\n  order_items         order_items[]\n}\n\nmodel reports {\n  id            Int       @id @default(autoincrement())\n  report_name   String\n  generated_at  DateTime? @default(now()) @db.Timestamp(6)\n  format        String?   @default(\"pdf\")\n  related_tasks String?\n  manager_id    Int?\n  users         users?    @relation(fields: [manager_id], references: [id], onDelete: NoAction, onUpdate: NoAction)\n}\n\nmodel settings {\n  id    Int     @id @default(autoincrement())\n  key   String  @unique\n  value String?\n}\n\nmodel users {\n  id         Int       @id @default(autoincrement())\n  name       String    @db.VarChar(255)\n  login      String    @unique @db.VarChar(100)\n  password   String    @db.VarChar(255)\n  company_id Int?\n  role       String?   @default(\"user\") @db.VarChar(50)\n  status     String?   @default(\"active\") @db.VarChar(20)\n  created_at DateTime? @default(now()) @db.Timestamp(6)\n  reports    reports[]\n  companies  Company?  @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)\n}\n",
+  "inlineSchemaHash": "e9f8548d096a0fbc583f74387ecf55206eaedaed1c50177d3546a4c469654c48",
+  "copyEngine": true
+}
+config.dirname = '/'
+
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Company\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contact_email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contact_phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"CompanyTousers\"}],\"dbName\":\"companies\"},\"activity_logs\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"details\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"clients\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contact_email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contact_phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"activity_status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"purchase_history\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"credit_rating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"orders\",\"relationName\":\"clientsToorders\"}],\"dbName\":null},\"finances\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"transaction_date\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"account\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"responsible_person\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"kpis\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"target_value\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"actual_value\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"forecast_value\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"order_items\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"order_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"product_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"orders\",\"relationName\":\"order_itemsToorders\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"products\",\"relationName\":\"order_itemsToproducts\"}],\"dbName\":null},\"orders\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"client_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"order_date\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"payment_method\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"delivery_method\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"total_amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"order_items\",\"kind\":\"object\",\"type\":\"order_items\",\"relationName\":\"order_itemsToorders\"},{\"name\":\"clients\",\"kind\":\"object\",\"type\":\"clients\",\"relationName\":\"clientsToorders\"}],\"dbName\":null},\"products\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"sku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"supplier\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"stock\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"availability_status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"order_items\",\"kind\":\"object\",\"type\":\"order_items\",\"relationName\":\"order_itemsToproducts\"}],\"dbName\":null},\"reports\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"report_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"generated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"format\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"related_tasks\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"manager_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"reportsTousers\"}],\"dbName\":null},\"settings\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"key\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"users\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"login\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"company_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"reports\",\"kind\":\"object\",\"type\":\"reports\",\"relationName\":\"reportsTousers\"},{\"name\":\"companies\",\"kind\":\"object\",\"type\":\"Company\",\"relationName\":\"CompanyTousers\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
+config.engineWasm = {
+  getRuntime: async () => require('./query_engine_bg.js'),
+  getQueryEngineWasmModule: async () => {
+    const loader = (await import('#wasm-engine-loader')).default
+    const engine = (await loader).default
+    return engine
   }
 }
+config.compilerWasm = undefined
 
+config.injectableEdgeEnv = () => ({
+  parsed: {
+    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
+  }
+})
+
+if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
+  Debug.enable(typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined)
+}
+
+const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
-
 Object.assign(exports, Prisma)
+
