@@ -25,9 +25,7 @@ const eslintConfig = [
       '**/*.config.mjs',
     ],
   },
-  // Основная конфигурация Next.js
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
-  // Переопределяем правила
+
   {
     rules: {
       '@typescript-eslint/no-unused-expressions': 'off',
