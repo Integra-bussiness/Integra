@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input"
 import { FormEvent, useState } from "react"
 // import { loginUser } from "@/actions/loginUser"
 import { signIn } from "next-auth/react";
-import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { useRoute } from "next/navigation"
 import { Loader } from "lucide-react"
 import { toast } from "sonner"
 
