@@ -22,7 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Company } from "@/interfaces/user-interfaces"
 
 interface SignupFormProps extends React.ComponentProps<"div"> {
-    companies: Company[];  // ← Массив компаний
+    companies: Company[];
 }
 
 export function SignupForm({
@@ -103,6 +103,6 @@ export function SignupForm({
                     </form>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     )
 }
