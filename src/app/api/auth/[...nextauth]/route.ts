@@ -42,7 +42,7 @@ export const handler = NextAuth({
         },
         async session({ session, token }) {
             if (token && session.user) {
-                session.user.id = token.id as string;
+                session.user.id = token.id as number;
                 session.user.name = token.name as string;
                 session.user.login = token.login as string;
             }
