@@ -33,7 +33,7 @@ declare module "next-auth" {
 
 
     export interface JWT {
-        id?: string;
+        id?: number;
         login?: string;
     }
 }
