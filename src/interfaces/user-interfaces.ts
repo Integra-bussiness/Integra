@@ -6,23 +6,31 @@ export interface Company {
 }
 
 declare module "next-auth" {
-    export interface Session {
+    
+       export interface Session {
         user: {
-            id: string;
+            id: number; 
             login: string;
             password: string;
             name: string;
-            companyId: number | null;
+            company_id?: number | null;
+            role?: string | null; 
+            status?: string | null; 
+            created_at?: Date | null;
         };
     }
 
     export interface User {
-        id: string;
+        id: number;
         login: string;
         password: string;
         name: string;
-        companyId: number | null;
+        company_id?: number | null;
+        role?: string | null;
+        status?: string | null;
+        created_at?: Date | null;
     }
+
 
     export interface JWT {
         id?: string;
