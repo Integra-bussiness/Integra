@@ -32,7 +32,7 @@ export default function AppSidebar() {
                 <span >Integra</span>
             </SidebarHeader>
             <SidebarContent>
-                <Collapsible>
+                <Collapsible defaultOpen>
                     <SidebarGroup>
                         <SidebarGroupLabel asChild>
                             <CollapsibleTrigger className="flex justify-between items-center">

@@ -3,7 +3,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
 export const handler = NextAuth({
-    session: { strategy: "jwt" },
+    session: { strategy: "jwt", maxAge: 3600 },
     providers: [
         Credentials({
             name: "Login / Password",
@@ -12,16 +12,23 @@ export const handler = NextAuth({
                 password: { label: "Password", type: "password" },
             },
             authorize: async (credentials) => {
+
                 if (!credentials?.login || !credentials?.password) {
-                    return null;
+                    throw new Error("Введите логин и пароль");
                 }
+
                 const user = await getUser(credentials.login);
+
                 if (!user) {
-                    return null;
+                    throw new Error("Пользователь с данным логином не найден");
+                }
+
+                if (!user.companyId) {
+                    throw new Error("Обратитесь к руководителю");
                 }
 
                 if (credentials.password !== user.password) {
-                    return null;
+                    throw new Error("Неверный логин или пароль");
                 }
 
                 return user;
@@ -39,15 +46,14 @@ export const handler = NextAuth({
         },
         async session({ session, token }) {
             if (token && session.user) {
-                session.user.id = token.id;
+                session.user.id = token.id as string;
                 session.user.name = token.name as string;
                 session.user.login = token.login as string;
-                session.user.email = token.email as string;
             }
             return session;
         }
     },
-    secret: process.env.AUTH_SECRET
+    secret: process.env.AUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };

@@ -20,6 +20,9 @@ import { Input } from "@/components/ui/input"
 import { FormEvent, useState } from "react"
 // import { loginUser } from "@/actions/loginUser"
 import { signIn } from "next-auth/react";
+import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { Loader } from "lucide-react"
+import { toast } from "sonner"
 
 export function LoginForm({
     className,
@@ -31,29 +34,47 @@ export function LoginForm({
         password: string,
     }
 
+    const [loading, setLoading] = useState<boolean>(false)
+    const [error, setError] = useState<string | null>(null)
     const [formData, setFormData] = useState<LoginData>({
         login: "",
         password: "",
     })
 
+    const router = useRouter()
+
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
+        setLoading(true)
+
         const result = await signIn('credentials', {
-            redirect: true,
-            callbackUrl: '/dashboard',
+            redirect: false,
             login: formData.login,
             password: formData.password,
         });
 
-        return result;
+        if (result?.error) {
+            toast.error(result.error)
+            setError(result.error)
+        }
+
+        if (result?.ok) {
+            setError('')
+            router.push('/dashboard')
+            toast.success("Авторизация успешна!")
+        }
+
+        setLoading(false)
     };
 
+
     return (
-        <div className={cn("flex flex-col gap-6", className)} {...props}>
-            <Card>
+        <div className={cn(`flex flex-col gap-6`, className)} {...props}>
+            <Card style={{ borderColor: `${error ? 'red' : ''}` }}>
                 <CardHeader>
-                    <CardTitle>Войдите в свой акканут</CardTitle>
+                    <CardTitle>Войдите в свой аккаунт</CardTitle>
                     <CardDescription>
                         Введите данные, которые передал вам руководитель
                     </CardDescription>
@@ -66,6 +87,7 @@ export function LoginForm({
                                 <Input
                                     id="login"
                                     type="text"
+                                    style={{ borderColor: `${error ? 'red' : ''}` }}
                                     placeholder="Логин"
                                     value={formData.login}
                                     onChange={(e) => { setFormData({ ...formData, login: e.target.value }) }}
@@ -76,19 +98,21 @@ export function LoginForm({
                                 <div className="flex items-center">
                                     <FieldLabel htmlFor="password">Пароль</FieldLabel>
                                 </div>
-                                <Input id="password" value={formData.password} type="password" placeholder="Пароль" required onChange={(e) => { setFormData({ ...formData, password: e.target.value }) }} />
+                                <Input
+
+                                    style={{ borderColor: `${error ? 'red' : ''}` }} id="password" value={formData.password} type="password" placeholder="Пароль" required onChange={(e) => { setFormData({ ...formData, password: e.target.value }) }} />
                             </Field>
                             <Field>
-                                <Button type="submit">Login</Button>
+                                <Button disabled={loading} type="submit">Войти {loading ? <Loader className="animate-spin" /> : null}</Button>
 
                                 <FieldDescription className="text-center">
-                                    Don`t have an account? <a href="#">Sign up</a>
+                                    Хотите зарегистрировать нового работника? <a href="#">Регистрация</a>
                                 </FieldDescription>
                             </Field>
                         </FieldGroup>
                     </form>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     )
 }

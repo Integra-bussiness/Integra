@@ -4,14 +4,24 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id       String @default(uuid())
-  name     String
-  login    String @id @unique
-  password String
-  company String 
+  id        String  @id @default(uuid())
+  name      String
+  login     String  @unique
+  password  String
+  companyId Int
+  company   Company @relation(fields: [companyId], references: [id])
+}
+
+model Company {
+  id          Int    @unique @default(autoincrement())
+  companyName String
+  users       User[]
+
+  @@map("companies")
 }
