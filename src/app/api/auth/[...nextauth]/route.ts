@@ -23,10 +23,6 @@ export const handler = NextAuth({
                     throw new Error("Пользователь с данным логином не найден");
                 }
 
-                if (!user.companyId) {
-                    throw new Error("Обратитесь к руководителю");
-                }
-
                 if (credentials.password !== user.password) {
                     throw new Error("Неверный логин или пароль");
                 }
