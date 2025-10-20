@@ -1,7 +1,13 @@
+import type { User } from "next-auth"
 
 export interface Company {
-    id: number;
-    companyName: string;
+     id: number
+  name: string
+  address?: string | null
+  contact_email?: string | null
+  contact_phone?: string | null
+  created_at?: Date | null
+  users: User[]
 
 }
 
