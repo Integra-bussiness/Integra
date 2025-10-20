@@ -87,7 +87,7 @@ export function SignupForm({
                                         </SelectTrigger>
                                         <SelectContent>
                                             {companies.map(comp => (
-                                                <SelectItem key={comp.companyName} value={comp.id.toString()}>{comp.companyName}</SelectItem>
+                                                <SelectItem key={comp.name} value={comp.id.toString()}>{comp.name}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
