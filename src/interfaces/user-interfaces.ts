@@ -7,7 +7,7 @@ export interface Company {
   contact_email?: string | null
   contact_phone?: string | null
   created_at?: Date | null
-  users: User[]
+  users?: User[]
 
 }
 
