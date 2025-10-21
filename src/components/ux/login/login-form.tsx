@@ -16,59 +16,49 @@ import {
     FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-
 import { FormEvent, useState } from "react"
-// import { loginUser } from "@/actions/loginUser"
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation"
 import { Loader } from "lucide-react"
 import { toast } from "sonner"
+import { createClient } from "@/lib/supabase/client"
 
 export function LoginForm({
-    className,
-    ...props
-}: React.ComponentProps<"div">) {
-
-    interface LoginData {
-        login: string,
-        password: string,
-    }
+                              className,
+                              ...props
+                          }: React.ComponentProps<"div">) {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
-    const [formData, setFormData] = useState<LoginData>({
-        login: "",
+    const [formData, setFormData] = useState({
+        email: "",
         password: "",
     })
 
     const router = useRouter()
-
+    const supabase = createClient()
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-
         setLoading(true)
+        setError(null)
 
-        const result = await signIn('credentials', {
-            redirect: false,
-            login: formData.login,
+        const { error } = await supabase.auth.signInWithPassword({
+            email: formData.email,
             password: formData.password,
-        });
+        })
 
-        if (result?.error) {
-            toast.error(result.error)
-            setError(result.error)
+        if (error) {
+            toast.error(error.message)
+            setError(error.message)
+            setLoading(false)
+            return
         }
 
-        if (result?.ok) {
-            setError('')
-            router.push('/dashboard')
-            toast.success("Авторизация успешна!")
-        }
-
+        toast.success("Авторизация успешна!")
+        router.push('/dashboard')
+        router.refresh()
         setLoading(false)
     };
-
 
     return (
         <div className={cn(`flex flex-col gap-6`, className)} {...props}>
@@ -76,43 +66,48 @@ export function LoginForm({
                 <CardHeader>
                     <CardTitle>Войдите в свой аккаунт</CardTitle>
                     <CardDescription>
-                        Введите данные, которые передал вам руководитель
+                        Введите email и пароль для входа
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit}>
                         <FieldGroup>
                             <Field>
-                                <FieldLabel htmlFor="login">Ваш логин</FieldLabel>
+                                <FieldLabel htmlFor="email">Email</FieldLabel>
                                 <Input
-                                    id="login"
-                                    type="text"
+                                    id="email"
+                                    type="email"
                                     style={{ borderColor: `${error ? 'red' : ''}` }}
-                                    placeholder="Логин"
-                                    value={formData.login}
-                                    onChange={(e) => { setFormData({ ...formData, login: e.target.value }) }}
+                                    placeholder="user@example.com"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     required
                                 />
                             </Field>
                             <Field>
-                                <div className="flex items-center">
-                                    <FieldLabel htmlFor="password">Пароль</FieldLabel>
-                                </div>
+                                <FieldLabel htmlFor="password">Пароль</FieldLabel>
                                 <Input
-
-                                    style={{ borderColor: `${error ? 'red' : ''}` }} id="password" value={formData.password} type="password" placeholder="Пароль" required onChange={(e) => { setFormData({ ...formData, password: e.target.value }) }} />
+                                    style={{ borderColor: `${error ? 'red' : ''}` }}
+                                    id="password"
+                                    value={formData.password}
+                                    type="password"
+                                    placeholder="Пароль"
+                                    required
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                />
                             </Field>
                             <Field>
-                                <Button disabled={loading} type="submit">Войти {loading ? <Loader className="animate-spin" /> : null}</Button>
-
+                                <Button disabled={loading} type="submit">
+                                    Войти {loading ? <Loader className="animate-spin" /> : null}
+                                </Button>
                                 <FieldDescription className="text-center">
-                                    Хотите зарегистрировать нового работника? <a href="#">Регистрация</a>
+                                    Нет аккаунта? <a href="/register">Регистрация</a>
                                 </FieldDescription>
                             </Field>
                         </FieldGroup>
                     </form>
                 </CardContent>
             </Card>
-        </div >
+        </div>
     )
 }
