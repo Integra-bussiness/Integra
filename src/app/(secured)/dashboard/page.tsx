@@ -183,7 +183,7 @@ export default async function DashboardPage() {
                 Dashboard Data
             </h1>
             <div style={{ textAlign: "center", marginBottom: "30px", fontSize: "1.1rem" }}>
-                Привет, {user.email} , {user.name}
+                Привет, {user.email}
             </div>
 
             <section style={sectionStyle}>
