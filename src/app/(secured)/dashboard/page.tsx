@@ -1,7 +1,8 @@
-import React from "react";
+"use client"
+
+import React, { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { prisma, withPrismaRetry } from "@/utils/prisma";
 import {
     Table,
     TableHeader,
@@ -10,6 +11,7 @@ import {
     TableHead,
     TableCell,
 } from "@/components/ui/table";
+import { finances } from "@/generated/prisma";
 
 const ITEMS_LIMIT = 50;
 
@@ -37,21 +39,49 @@ const mainStyle: React.CSSProperties = {
 };
 
 
-function ErrorDisplay({ message }: { message: string }) {
-    return (
-        <div className="flex items-center justify-center min-h-screen">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-red-800">
-                <h2 className="font-bold text-xl mb-2">Ошибка загрузки данных</h2>
-                <p>{message}</p>
-            </div>
-        </div>
-    );
-}
+// function ErrorDisplay({ message }: { message: string }) {
+//     return (
+//         <div className="flex items-center justify-center min-h-screen">
+//             <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-red-800">
+//                 <h2 className="font-bold text-xl mb-2">Ошибка загрузки данных</h2>
+//                 <p>{message}</p>
+//             </div>
+//         </div>
+//     );
+// }
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
+
+    // const supabase = await createClient();
+    // const { data: { user } } = await supabase.auth.getUser();
 
 
-    const finances = await prisma.finances.findMany()
+    const [finances, setFinances] = useState<finances[]>([])
+
+    // if (!user) {
+    //     redirect("/");
+    // }
+
+    useEffect(() => {
+        const fetchFinances = async () => {
+            try {
+                const res = await fetch('/api/finances')
+                if (!res.ok) throw new Error("Api error");
+                const { data } = await res.json()
+
+                setFinances(data)
+            }
+            catch (err) {
+                console.error(err)
+            }
+            finally {
+                console.log('Готово /api/finances');
+
+            }
+        }
+
+        fetchFinances()
+    }, [])
     // const kpis = await prisma.kpis.findMany()
     // const orderItems = await prisma.order_items.findMany()
     // const orders = await prisma.orders.findMany()
@@ -69,12 +99,6 @@ export default async function DashboardPage() {
             >
                 Dashboard Data
             </h1>
-            <div style={{ textAlign: "center", marginBottom: "30px", fontSize: "1.1rem" }}>
-                Привет, {user.email}
-            </div>
-
-
-            {/* Финансы */}
             <section style={sectionStyle}>
                 <h2 style={headingStyle}>Финансы</h2>
                 <div className="overflow-x-auto rounded border border-gray-300 bg-white">
@@ -88,19 +112,18 @@ export default async function DashboardPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {finances.map((f) => (
+                            {finances ? finances.map((f) => (
                                 <TableRow key={f.id} className="hover:bg-gray-100">
                                     <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
                                     <TableCell>{f.type}</TableCell>
                                     <TableCell>{f.amount?.toString() ?? "0"}</TableCell>
                                     <TableCell>{f.category ?? "нет категории"}</TableCell>
                                 </TableRow>
-                            ))}
+                            )) : <TableRow><TableCell colSpan={4}>Данных нет </TableCell></TableRow>}
                         </TableBody>
                     </Table>
                 </div>
             </section>
-
         </main>
     );
 }
