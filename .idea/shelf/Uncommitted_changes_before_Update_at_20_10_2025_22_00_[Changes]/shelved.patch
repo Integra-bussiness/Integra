@@ -1,0 +1,295 @@
+Index: src/app/api/auth/[...nextauth]/route.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import { getUser } from \"@/utils/user\";\r\nimport NextAuth from \"next-auth\";\r\nimport Credentials from \"next-auth/providers/credentials\";\r\n\r\nexport const handler = NextAuth({\r\n    session: { strategy: \"jwt\", maxAge: 3600 },\r\n    providers: [\r\n        Credentials({\r\n            name: \"Login / Password\",\r\n            credentials: {\r\n                login: { label: \"Login\", type: \"text\" },\r\n                password: { label: \"Password\", type: \"password\" },\r\n            },\r\n            authorize: async (credentials) => {\r\n\r\n                if (!credentials?.login || !credentials?.password) {\r\n                    throw new Error(\"Введите логин и пароль\");\r\n                }\r\n\r\n                const user = await getUser(credentials.login);\r\n\r\n                if (!user) {\r\n                    throw new Error(\"Пользователь с данным логином не найден\");\r\n                }\r\n\r\n                if (!user.companyId) {\r\n                    throw new Error(\"Обратитесь к руководителю\");\r\n                }\r\n\r\n                if (credentials.password !== user.password) {\r\n                    throw new Error(\"Неверный логин или пароль\");\r\n                }\r\n\r\n                return user;\r\n            }\r\n        })\r\n    ],\r\n    callbacks: {\r\n        async jwt({ token, user }) {\r\n            if (user) {\r\n                token.id = user.id;\r\n                token.name = user.name;\r\n                token.login = user.login;\r\n            }\r\n            return token;\r\n        },\r\n        async session({ session, token }) {\r\n            if (token && session.user) {\r\n                session.user.id = token.id as string;\r\n                session.user.name = token.name as string;\r\n                session.user.login = token.login as string;\r\n            }\r\n            return session;\r\n        }\r\n    },\r\n    secret: process.env.AUTH_SECRET,\r\n});\r\n\r\nexport { handler as GET, handler as POST };\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/api/auth/[...nextauth]/route.ts b/src/app/api/auth/[...nextauth]/route.ts
+--- a/src/app/api/auth/[...nextauth]/route.ts	(revision 83178babc64085dbe9f1e7e7ab423858aa065a12)
++++ b/src/app/api/auth/[...nextauth]/route.ts	(date 1760974304589)
+@@ -23,7 +23,7 @@
+                     throw new Error("Пользователь с данным логином не найден");
+                 }
+ 
+-                if (!user.companyId) {
++                if (!user.company_id) {
+                     throw new Error("Обратитесь к руководителю");
+                 }
+ 
+Index: src/components/ux/register/register-form.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\"use client\"\r\n\r\nimport { cn } from \"@/lib/utils\"\r\nimport { Button } from \"@/components/ui/button\"\r\nimport {\r\n    Card,\r\n    CardContent,\r\n    CardDescription,\r\n    CardHeader,\r\n    CardTitle,\r\n} from \"@/components/ui/card\"\r\nimport {\r\n    Field,\r\n    FieldDescription,\r\n    FieldGroup,\r\n    FieldLabel,\r\n} from \"@/components/ui/field\"\r\nimport { Input } from \"@/components/ui/input\"\r\nimport { useState } from \"react\"\r\nimport { IFormData } from \"@/types/form-data\"\r\nimport { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@/components/ui/select\"\r\nimport { Company } from \"@/interfaces/user-interfaces\"\r\n\r\ninterface SignupFormProps extends React.ComponentProps<\"div\"> {\r\n    companies: Company[];  // ← Массив компаний\r\n}\r\n\r\nexport function SignupForm({\r\n    className,\r\n    companies,\r\n    ...props\r\n}: SignupFormProps) {\r\n\r\n    const [userData, setUserData] = useState<IFormData>({\r\n        name: \"\",\r\n        login: \"\",\r\n        password: \"\",\r\n        confirmPassword: '',\r\n        companyId: null\r\n    })\r\n\r\n\r\n    return (\r\n        <div className={cn(\"flex flex-col gap-6\", className)} {...props}>\r\n            <Card>\r\n                <CardHeader className=\"text-center\">\r\n                    <CardTitle className=\"text-xl\">Создайте аккаунт</CardTitle>\r\n                    <CardDescription>\r\n                        Создайте ваш аккаунт, привязанный к вашей компании\r\n                    </CardDescription>\r\n                </CardHeader>\r\n                <CardContent>\r\n                    <form>\r\n                        <FieldGroup>\r\n                            <Field>\r\n                                <FieldLabel htmlFor=\"nameReg\">Ваше имя</FieldLabel>\r\n                                <Input id=\"nameReg\" type=\"text\" placeholder=\"John Doe\" required onChange={(e) => setUserData({ ...userData, name: e.target.value })} value={userData.name} />\r\n                            </Field>\r\n                            <Field>\r\n                                <FieldLabel htmlFor=\"loginReg\">Логин</FieldLabel>\r\n                                <Input\r\n                                    onChange={(e) => setUserData({ ...userData, login: e.target.value })} value={userData.login}\r\n                                    id=\"loginReg\"\r\n                                    type=\"text\"\r\n                                    placeholder=\"Логин\"\r\n                                    required\r\n                                />\r\n                            </Field>\r\n                            <Field>\r\n                                <Field className=\"grid grid-cols-2 gap-4\">\r\n                                    <Field>\r\n                                        <FieldLabel htmlFor=\"password\">Пароль</FieldLabel>\r\n                                        <Input placeholder=\"Пароль\" id=\"password\" type=\"password\" required onChange={(e) => setUserData({ ...userData, password: e.target.value })} value={userData.password} />\r\n                                    </Field>\r\n                                    <Field>\r\n                                        <FieldLabel htmlFor=\"confirmPassword\">\r\n                                            Повторите пароль\r\n                                        </FieldLabel>\r\n                                        <Input placeholder=\"Повторите пароль\" id=\"confirmPassword\" type=\"password\" required onChange={(e) => setUserData({ ...userData, confirmPassword: e.target.value })} value={userData.confirmPassword} />\r\n                                    </Field>\r\n                                </Field>\r\n                                <Field>\r\n                                    <FieldLabel htmlFor=\"companyID\">Выберите вашу компанию</FieldLabel>\r\n                                    <Select>\r\n                                        <SelectTrigger className=\"w-[180px]\">\r\n                                            <SelectValue placeholder=\"Theme\" />\r\n                                        </SelectTrigger>\r\n                                        <SelectContent>\r\n                                            {companies.map(comp => (\r\n                                                <SelectItem key={comp.companyName} value={comp.id.toString()}>{comp.companyName}</SelectItem>\r\n                                            ))}\r\n                                        </SelectContent>\r\n                                    </Select>\r\n                                </Field>\r\n                                <FieldDescription>\r\n                                    Должен быть больше 8 символов.\r\n                                </FieldDescription>\r\n                            </Field>\r\n                            <Field>\r\n                                <Button type=\"submit\">Создать аккаунт</Button>\r\n                            </Field>\r\n                        </FieldGroup>\r\n                    </form>\r\n                </CardContent>\r\n            </Card>\r\n        </div>\r\n    )\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/components/ux/register/register-form.tsx b/src/components/ux/register/register-form.tsx
+--- a/src/components/ux/register/register-form.tsx	(revision 83178babc64085dbe9f1e7e7ab423858aa065a12)
++++ b/src/components/ux/register/register-form.tsx	(date 1760974638244)
+@@ -81,13 +81,13 @@
+                                 </Field>
+                                 <Field>
+                                     <FieldLabel htmlFor="companyID">Выберите вашу компанию</FieldLabel>
+-                                    <Select>
++                                    <Select name="company_id" required>
+                                         <SelectTrigger className="w-[180px]">
+-                                            <SelectValue placeholder="Theme" />
++                                            <SelectValue placeholder="Выберите компанию" />
+                                         </SelectTrigger>
+                                         <SelectContent>
+                                             {companies.map(comp => (
+-                                                <SelectItem key={comp.companyName} value={comp.id.toString()}>{comp.companyName}</SelectItem>
++                                                <SelectItem key={comp.id} value={comp.id.toString()}>{comp.name}</SelectItem>
+                                             ))}
+                                         </SelectContent>
+                                     </Select>
+Index: src/app/(secured)/dashboard/page.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import { Button } from \"@/components/ui/button\"\r\n\r\n\r\nexport default function page() {\r\n    return (\r\n        <Button className=\"btn-grad-base btn-ocean gradient-btn hover:btn-ocean-hover\">Синхронизировать</Button>\r\n    )\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/(secured)/dashboard/page.tsx b/src/app/(secured)/dashboard/page.tsx
+--- a/src/app/(secured)/dashboard/page.tsx	(revision 83178babc64085dbe9f1e7e7ab423858aa065a12)
++++ b/src/app/(secured)/dashboard/page.tsx	(date 1760975265873)
+@@ -5,4 +5,128 @@
+     return (
+         <Button className="btn-grad-base btn-ocean gradient-btn hover:btn-ocean-hover">Синхронизировать</Button>
+     )
+-}
+\ No newline at end of file
++}
++
++import React from "react";
++
++
++
++const kpis: Kpi[] = [];
++const orderItems: OrderItem[] = [];
++const finances: Finance[] = [];
++const activityLogs: ActivityLog[] = [];
++const settings: Setting[] = [];
++const reports: Report[] = [];
++const products: Product[] = [];
++const orders: Order[] = [];
++const clients: Client[] = [];
++
++
++export default function Page() {
++    return (
++        <div>
++            <Button className="btn-grad-base btn-ocean gradient-btn hover:btn-ocean-hover">
++                Синхронизировать
++            </Button>
++
++            <section>
++                <h2>KPI</h2>
++                <ul>
++                    {kpis.map((kpi) => (
++                        <li key={kpi.id}>
++                            {kpi.name} - Target: {kpi.target_value}, Actual: {kpi.actual_value}
++                        </li>
++                    ))}
++                </ul>
++            </section>
++
++            <section>
++                <h2>Order Items</h2>
++                <ul>
++                    {orderItems.map((item) => (
++                        <li key={item.id}>
++                            Product ID: {item.product_id}, Quantity: {item.quantity}, Price: {item.price}
++                        </li>
++                    ))}
++                </ul>
++            </section>
++
++            <section>
++                <h2>Finance</h2>
++                <ul>
++                    {finances.map((f) => (
++                        <li key={f.id}>
++                            {f.transaction_date} - {f.type} - {f.amount}
++                        </li>
++                    ))}
++                </ul>
++            </section>
++
++            <section>
++                <h2>Activity Log</h2>
++                <ul>
++                    {activityLogs.map((log) => (
++                        <li key={log.id}>
++                            {log.action} at {log.created_at}
++                        </li>
++                    ))}
++                </ul>
++            </section>
++
++            <section>
++                <h2>Settings</h2>
++                <ul>
++                    {settings.map((s) => (
++                        <li key={s.id}>
++                            {s.key}: {s.value}
++                        </li>
++                    ))}
++                </ul>
++            </section>
++
++            <section>
++                <h2>Reports</h2>
++                <ul>
++                    {reports.map((report) => (
++                        <li key={report.id}>
++                            {report.report_name} (format: {report.format})
++                        </li>
++                    ))}
++                </ul>
++            </section>
++
++            <section>
++                <h2>Products</h2>
++                <ul>
++                    {products.map((p) => (
++                        <li key={p.id}>
++                            {p.name} - Price: {p.price}, Stock: {p.stock}
++                        </li>
++                    ))}
++                </ul>
++            </section>
++
++            <section>
++                <h2>Orders</h2>
++                <ul>
++                    {orders.map((order) => (
++                        <li key={order.id}>
++                            {order.order_date} - Total: {order.total_amount}, Status: {order.status}
++                        </li>
++                    ))}
++                </ul>
++            </section>
++
++            <section>
++                <h2>Clients</h2>
++                <ul>
++                    {clients.map((client) => (
++                        <li key={client.id}>
++                            {client.name} - Email: {client.contact_email}
++                        </li>
++                    ))}
++                </ul>
++            </section>
++        </div>
++    );
++}
+Index: src/types/form-data.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>export type IFormData = {\r\n    login: string;\r\n    password: string;\r\n    confirmPassword: string;\r\n    name: string;\r\n    companyId: number | null;\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/types/form-data.ts b/src/types/form-data.ts
+--- a/src/types/form-data.ts	(revision 83178babc64085dbe9f1e7e7ab423858aa065a12)
++++ b/src/types/form-data.ts	(date 1760974926529)
+@@ -4,4 +4,95 @@
+     confirmPassword: string;
+     name: string;
+     companyId: number | null;
+-}
+\ No newline at end of file
++}
++
++export interface Company {
++    id: number;
++    name: string;
++    address: string;
++    contact_email: string;
++    contact_phone: string;
++    created_at: string;
++}
++
++interface Kpi {
++    id: string;
++    category: string;
++    name: string;
++    target_value: number;
++    actual_value: number;
++    forecast_value: number;
++    status: string;
++}
++
++interface OrderItem {
++    id: string;
++    order_id: string;
++    product_id: string;
++    quantity: number;
++    price: number;
++}
++
++interface Finance {
++    id: string;
++    transaction_date: string;
++    type: string;
++    category: string;
++    account: string;
++    amount: number;
++    description: string;
++    responsible_person: string;
++}
++
++interface ActivityLog {
++    id: string;
++    user_id: string;
++    action: string;
++    details: string;
++    created_at: string;
++}
++
++interface Setting {
++    id: string;
++    key: string;
++    value: string;
++}
++
++interface Report {
++    id: string;
++    report_name: string;
++    generated_at: string;
++    format: string;
++    related_tasks: string;
++    manager_id: string;
++}
++
++interface Product {
++    id: string;
++    name: string;
++    category: string;
++    supplier: string;
++    price: number;
++    stock: number;
++    availability_status: string;
++}
++
++interface Order {
++    id: string;
++    client_id: string;
++    order_date: string;
++    status: string;
++    payment_method: string;
++    delivery_method: string;
++    total_amount: number;
++}
++
++interface Client {
++    id: string;
++    name: string;
++    contact_email: string;
++    contact_phone: string;
++    activity_status: string;
++    purchase_history: string;
++    credit_rating: string;
++}

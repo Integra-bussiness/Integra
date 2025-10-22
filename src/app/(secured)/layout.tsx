@@ -1,12 +1,26 @@
+"use server"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/common/AppSidebar/AppSidebar";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
-export default function SidebarLayout({
+export default async function SidebarLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
 
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+
+    console.log("USER:", user);
+
+
+    if (!user) {
+        console.log('Не авторизован!');
+        redirect("/");
+    }
 
 
     return (
