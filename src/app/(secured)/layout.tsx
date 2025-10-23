@@ -3,6 +3,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import AppSidebar from "@/components/common/AppSidebar/AppSidebar";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { QueryProvider } from "@/providers/QueryProvider";
 
 export default async function SidebarLayout({
     children,
@@ -31,7 +32,9 @@ export default async function SidebarLayout({
                     <SidebarTrigger />
                 </header>
                 <main className="pl-[20px] pt-[10px] h-full">
-                    {children}
+                    <QueryProvider>
+                        {children}
+                    </QueryProvider>
                 </main>
             </SidebarInset>
         </SidebarProvider>

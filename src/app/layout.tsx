@@ -3,6 +3,7 @@ import { Rubik } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/siteConfig";
 import { Toaster } from "sonner";
+import { QueryProvider } from "@/providers/QueryProvider";
 
 
 const rubik = Rubik({
@@ -21,7 +22,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
 
 
   return (

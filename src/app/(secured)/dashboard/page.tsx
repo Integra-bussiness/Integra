@@ -12,6 +12,7 @@ import {
     TableCell,
 } from "@/components/ui/table";
 import { finances } from "@/generated/prisma";
+import { useQuery } from "@tanstack/react-query";
 
 const ITEMS_LIMIT = 50;
 
@@ -52,39 +53,16 @@ const mainStyle: React.CSSProperties = {
 
 export default function DashboardPage() {
 
-    // const supabase = await createClient();
-    // const { data: { user } } = await supabase.auth.getUser();
+    const { data, isPending, error } = useQuery<finances[]>({
+        queryKey: ["Finances"],
+        queryFn: async () => {
+            const res = await fetch('/api/finances')
+            const json = await res.json()
+            return json.data;
+        },
+        staleTime: 1000 * 60 * 5
+    })
 
-
-    const [finances, setFinances] = useState<finances[]>([])
-
-    // if (!user) {
-    //     redirect("/");
-    // }
-
-    useEffect(() => {
-        const fetchFinances = async () => {
-            try {
-                const res = await fetch('/api/finances')
-                if (!res.ok) throw new Error("Api error");
-                const { data } = await res.json()
-
-                setFinances(data)
-            }
-            catch (err) {
-                console.error(err)
-            }
-            finally {
-                console.log('Готово /api/finances');
-
-            }
-        }
-
-        fetchFinances()
-    }, [])
-    // const kpis = await prisma.kpis.findMany()
-    // const orderItems = await prisma.order_items.findMany()
-    // const orders = await prisma.orders.findMany()
 
     return (
         <main style={mainStyle}>
@@ -112,14 +90,16 @@ export default function DashboardPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {finances ? finances.map((f) => (
-                                <TableRow key={f.id} className="hover:bg-gray-100">
-                                    <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
-                                    <TableCell>{f.type}</TableCell>
-                                    <TableCell>{f.amount?.toString() ?? "0"}</TableCell>
-                                    <TableCell>{f.category ?? "нет категории"}</TableCell>
-                                </TableRow>
-                            )) : <TableRow><TableCell colSpan={4}>Данных нет </TableCell></TableRow>}
+                            {isPending ?
+                                <TableRow><TableCell colSpan={4}>Загрузка...</TableCell></TableRow>
+                                : data ? data.map((f) => (
+                                    <TableRow key={f.id} className="hover:bg-gray-100">
+                                        <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
+                                        <TableCell>{f.type}</TableCell>
+                                        <TableCell>{f.amount?.toString() ?? "0"}</TableCell>
+                                        <TableCell>{f.category ?? "нет категории"}</TableCell>
+                                    </TableRow>
+                                )) : <TableRow><TableCell colSpan={4}>Данных нет</TableCell></TableRow>}
                         </TableBody>
                     </Table>
                 </div>
