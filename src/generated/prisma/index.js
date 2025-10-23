@@ -236,7 +236,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\TOPSECRET\\Desktop\\sisya\\src\\generated\\prisma",
+      "value": "C:\\Users\\TOPSECRET\\Desktop\\production\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -258,7 +258,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\TOPSECRET\\Desktop\\sisya\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\TOPSECRET\\Desktop\\production\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

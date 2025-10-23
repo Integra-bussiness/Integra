@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -53,12 +53,17 @@ const mainStyle: React.CSSProperties = {
 
 export default function DashboardPage() {
 
-    const { data, isPending, error } = useQuery<finances[]>({
-        queryKey: ["Finances"],
+    const { data, error } = useQuery<finances[]>({
+        queryKey: ["finances"],
         queryFn: async () => {
-            const res = await fetch('/api/finances')
-            const json = await res.json()
-            return json.data;
+            try {
+                const res = await fetch('/api/finances')
+                const json = await res.json()
+                return json.data ?? [];
+            }
+            catch (error) {
+                return []
+            }
         },
         staleTime: 1000 * 60 * 5
     })
@@ -79,6 +84,7 @@ export default function DashboardPage() {
             </h1>
             <section style={sectionStyle}>
                 <h2 style={headingStyle}>Финансы</h2>
+                {error?.message ?? ''}
                 <div className="overflow-x-auto rounded border border-gray-300 bg-white">
                     <Table>
                         <TableHeader>
@@ -89,18 +95,22 @@ export default function DashboardPage() {
                                 <TableHead>Категория</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
-                            {isPending ?
-                                <TableRow><TableCell colSpan={4}>Загрузка...</TableCell></TableRow>
-                                : data ? data.map((f) => (
-                                    <TableRow key={f.id} className="hover:bg-gray-100">
-                                        <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
-                                        <TableCell>{f.type}</TableCell>
-                                        <TableCell>{f.amount?.toString() ?? "0"}</TableCell>
-                                        <TableCell>{f.category ?? "нет категории"}</TableCell>
-                                    </TableRow>
-                                )) : <TableRow><TableCell colSpan={4}>Данных нет</TableCell></TableRow>}
-                        </TableBody>
+                        <Suspense fallback={<TableRow><TableCell colSpan={4}>Загрузка...</TableCell></TableRow>}>
+                            {data ?
+                                <TableBody>
+                                    {data.map((f) => (
+                                        <TableRow key={f.id} className="hover:bg-gray-100">
+                                            <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
+                                            <TableCell>{f.type}</TableCell>
+                                            <TableCell>{f.amount?.toString() ?? "0"}</TableCell>
+                                            <TableCell>{f.category ?? "нет категории"}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                                :
+                                ''
+                            }
+                        </Suspense>
                     </Table>
                 </div>
             </section>

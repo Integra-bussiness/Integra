@@ -6,7 +6,7 @@ import { prisma } from "@/utils/prisma";
 
 export default async function Home() {
 
-  // const companies = await prisma.company.findMany()
+  const companies = await prisma.company.findMany()
 
 
   return (
@@ -22,7 +22,7 @@ export default async function Home() {
             <LoginForm />
           </TabsContent>
           <TabsContent value="registration">
-            {/* <SignupForm companies={companies} /> */}
+            <SignupForm companies={companies} />
           </TabsContent>
         </Tabs>
       </div>
