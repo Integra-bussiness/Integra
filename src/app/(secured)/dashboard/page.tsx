@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/table";
 import { finances } from "@/generated/prisma";
 import { useQuery } from "@tanstack/react-query";
+import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ITEMS_LIMIT = 50;
 
@@ -53,16 +55,27 @@ const mainStyle: React.CSSProperties = {
 
 export default function DashboardPage() {
 
+    const [total, setTotal] = useState(0)
+
     const { data, isPending, error } = useQuery<finances[]>({
         queryKey: ["Finances"],
         queryFn: async () => {
             const res = await fetch('/api/finances')
             const json = await res.json()
-            return json.data;
+            return json.data ?? [];
         },
         staleTime: 1000 * 60 * 5
     })
 
+    useEffect(() => {
+        if (data) {
+            data.forEach((el) => {
+                if (el.type === 'доход') {
+                    setTotal(prev => prev + Number(el.amount))
+                }
+            })
+        }
+    }, [data])
 
     return (
         <main style={mainStyle}>
@@ -77,7 +90,21 @@ export default function DashboardPage() {
             >
                 Dashboard Data
             </h1>
-            <section style={sectionStyle}>
+
+            <section className="grid grid-cols-4 gap-5">
+                <Card>
+                    <CardHeader>Доходы</CardHeader>
+                    <CardContent>
+                        <div className="font-bold text-4xl text-primary">
+                            {total ? `${total} руб.` : <Skeleton className="h-[40px]" />}
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>123</Card>
+                <Card>123</Card>
+                <Card>123</Card>
+            </section>
+            <section className="mt-[50px]" style={sectionStyle}>
                 <h2 style={headingStyle}>Финансы</h2>
                 <div className="overflow-x-auto rounded border border-gray-300 bg-white">
                     <Table>
@@ -91,7 +118,9 @@ export default function DashboardPage() {
                         </TableHeader>
                         <TableBody>
                             {isPending ?
-                                <TableRow><TableCell colSpan={4}>Загрузка...</TableCell></TableRow>
+                                <TableRow><TableCell colSpan={4}>
+                                    <Skeleton className="h-[40px]" /></TableCell></TableRow>
+
                                 : data ? data.map((f) => (
                                     <TableRow key={f.id} className="hover:bg-gray-100">
                                         <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
