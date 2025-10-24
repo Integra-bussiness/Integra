@@ -11,7 +11,7 @@ import { Suspense } from "react"
 
 export default async function Clients() {
 
-    const users = await prisma.users.findMany()
+    const clients = await prisma.clients.findMany()
 
     return (
         <div>
@@ -38,20 +38,22 @@ export default async function Clients() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Дата регистрации</TableHead>
-                                <TableHead>ФИО</TableHead>
-                                <TableHead>Роль</TableHead>
+                                <TableHead>Название компании</TableHead>
+                                <TableHead>Контактые данные</TableHead>
+                                <TableHead>Рейтинг кредита</TableHead>
+                                <TableHead>История заказов</TableHead>
                                 <TableHead>Статус</TableHead>
                             </TableRow>
                         </TableHeader>
                         <Suspense fallback={<TableSkeleton />}>
                             <TableBody>
-                                {users.map((user) => (
+                                {clients.map((user) => (
                                     <TableRow key={user.id} className="hover:bg-gray-100">
-                                        <TableCell>{user.created_at?.toDateString()}</TableCell>
                                         <TableCell>{user.name}</TableCell>
-                                        <TableCell>{user.role}</TableCell>
-                                        <TableCell>{user.status}</TableCell>
+                                        <TableCell>{user.contact_email}</TableCell>
+                                        <TableCell>{user.credit_rating}</TableCell>
+                                        <TableCell>{user.purchase_history}</TableCell>
+                                        <TableCell>{user.activity_status}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
