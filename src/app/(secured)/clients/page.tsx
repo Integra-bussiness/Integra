@@ -23,11 +23,6 @@ export default async function Clients() {
                 <Button className="text-[16px]"><PlusIcon />Добавить клиента</Button>
             </TypographyH1>
             <Card className="pb-0 gap-0 pt-[10px] mt-[25px]">
-                <CardHeader className="px-[10px] gap-0">
-                    <TypographyH2 className="!pb-0 text-2xl">Клиенты</TypographyH2>
-                    <p className="text-lg text-gray-400 font-normal">Список всех клиентов</p>
-                    <Separator className="mt-4" />
-                </CardHeader>
                 <CardContent className="px-[10px] mt-4">
                     <InputGroup>
                         <InputGroupAddon>
