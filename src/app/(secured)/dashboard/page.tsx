@@ -108,8 +108,8 @@ export default async function DashboardPage() {
                                     <TableRow key={f.id} className="hover:bg-gray-100">
                                         <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
                                         <TableCell>{f.type}</TableCell>
-                                        <TableCell>{f.category ?? "нет категории"}</TableCell>
-                                        <TableCell>{`${f.amount?.toString()} руб.` ?? "0"}</TableCell>
+                                        <TableCell>{f.category}</TableCell>
+                                        <TableCell>{`${f.amount?.toString()} руб.`}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
