@@ -11,17 +11,14 @@ export default async function SidebarLayout({
     children: React.ReactNode;
 }>) {
 
-    const supabase = await createClient()
+    // const supabase = await createClient()
 
-    const { data: { user } } = await supabase.auth.getUser()
-
-    console.log("USER:", user);
+    // const { data: { user } } = await supabase.auth.getUser()
 
 
-    if (!user) {
-        console.log('Не авторизован!');
-        redirect("/");
-    }
+    // if (!user) {
+    //     redirect("/");
+    // }
 
 
     return (
@@ -31,7 +28,7 @@ export default async function SidebarLayout({
                 <header className="border-1 p-[10px]">
                     <SidebarTrigger />
                 </header>
-                <main className="pl-[20px] pt-[10px] h-full">
+                <main className="p-[20px] pt-[10px] h-full">
                     <QueryProvider>
                         {children}
                     </QueryProvider>

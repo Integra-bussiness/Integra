@@ -1,8 +1,4 @@
-"use client"
-
-import React, { Suspense, useEffect, useState } from "react";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import React, { Suspense } from "react";
 import {
     Table,
     TableHeader,
@@ -10,106 +6,122 @@ import {
     TableRow,
     TableHead,
     TableCell,
+    TableFooter,
 } from "@/components/ui/table";
-import { finances } from "@/generated/prisma";
-import { useQuery } from "@tanstack/react-query";
-
-const ITEMS_LIMIT = 50;
-
-const sectionStyle: React.CSSProperties = {
-    backgroundColor: "#f7f7f7",
-    borderRadius: "10px",
-    padding: "20px 25px",
-    marginBottom: "20px",
-    boxShadow: "0 1px 6px rgba(0,0,0,0.1)",
-};
-const headingStyle: React.CSSProperties = {
-    color: "#222222",
-    borderBottom: "2px solid #ccc",
-    paddingBottom: "6px",
-    marginBottom: "18px",
-    fontWeight: 600,
-    fontSize: "1.3rem",
-};
-const mainStyle: React.CSSProperties = {
-    maxWidth: "1100px",
-    margin: "30px auto",
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    color: "#111111",
-    lineHeight: 1.5,
-};
+import { Prisma, finances } from "@/generated/prisma";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { BoxIcon, ListOrdered, RussianRuble, ShoppingCart, Users2 } from "lucide-react";
+import { prisma } from "@/utils/prisma";
+import { TableSkeleton } from "@/components/common/TableSkeleton/TableSkeleton";
+import { Separator } from "@/components/ui/separator";
+import { TypographyH1, TypographyH2 } from "@/components/ui/Typography";
 
 
-// function ErrorDisplay({ message }: { message: string }) {
-//     return (
-//         <div className="flex items-center justify-center min-h-screen">
-//             <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-red-800">
-//                 <h2 className="font-bold text-xl mb-2">Ошибка загрузки данных</h2>
-//                 <p>{message}</p>
-//             </div>
-//         </div>
-//     );
-// }
 
-export default function DashboardPage() {
 
-    const { data, error } = useQuery<finances[]>({
-        queryKey: ["finances"],
-        queryFn: async () => {
-            try {
-                const res = await fetch('/api/finances')
-                const json = await res.json()
-                return json.data ?? [];
+export default async function DashboardPage() {
+
+    const [data, aggregation, ordersCount, clientsCount, productsCount] = await Promise.all([
+        prisma.finances.findMany({
+            orderBy: { transaction_date: 'desc' }
+        }),
+
+        prisma.finances.aggregate({
+            _sum: {
+                amount: true,
+            },
+            where: {
+                type: "доход",
             }
-            catch (error) {
-                return []
-            }
-        },
-        staleTime: 1000 * 60 * 5
-    })
+        }),
+        prisma.orders.count(),
+        prisma.clients.count(),
+        prisma.products.count(),
+    ])
 
 
     return (
-        <main style={mainStyle}>
-            <h1
-                style={{
-                    ...headingStyle,
-                    fontSize: "2rem",
-                    marginBottom: "10px",
-                    textAlign: "center",
-                    borderBottom: "none",
-                }}
-            >
-                Dashboard Data
-            </h1>
-            <section style={sectionStyle}>
-                <h2 style={headingStyle}>Финансы</h2>
-                {error?.message ?? ''}
-                <div className="overflow-x-auto rounded border border-gray-300 bg-white">
+        <main>
+            <TypographyH1>
+                Dashboard
+                <p className="mt-1 text-xl text-gray-400 font-normal">Основные показатели вашего бизнеса</p>
+            </TypographyH1>
+            <section className="grid grid-cols-4 gap-[20px] mt-[25px]">
+                <Card className="hover:bore">
+                    <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Выручка <RussianRuble color="grey" capHeight={25} /></CardHeader>
+                    <CardContent>
+                        <div className="font-bold text-4xl flex gap-[5px] items-center">
+                            {`${Number(aggregation._sum.amount)} руб.` ?? 'Ошибка подсчета'}
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <span className="text-[14px] income-color">+12.5% от прошлого месяца </span>
+                    </CardFooter>
+                </Card>
+                <Card>
+                    <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Заказы <ShoppingCart color="grey" capHeight={25} /></CardHeader>
+                    <CardContent>
+                        <div className="font-bold text-4xl flex gap-[5px] items-center">
+                            {ordersCount ?? 'Ошибка подсчета'}
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <span className="text-[14px] expense-color">-30% от прошлого месяца </span>
+                    </CardFooter>
+                </Card>
+                <Card>
+                    <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Клиенты <Users2 color="grey" capHeight={25} /></CardHeader>
+                    <CardContent>
+                        <div className="font-bold text-4xl flex gap-[5px] items-center">
+                            {clientsCount ?? 'Ошибка подсчета'}
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <span className="text-[14px] income-color">+200% от прошлого месяца </span>
+                    </CardFooter>
+                </Card>
+                <Card>
+                    <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Товары <BoxIcon color="#99a1af" capHeight={25} /></CardHeader>
+                    <CardContent>
+                        <div className="font-bold text-4xl flex gap-[5px] items-center">
+                            {productsCount ?? 'Ошибка подсчета'}
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <span className="text-[14px] income-color">+2 новых товара </span>
+                    </CardFooter>
+                </Card>
+            </section>
+            <section className="mt-[50px]">
+                <TypographyH2>Финансы</TypographyH2>
+                <div className="mt-[25px] overflow-x-auto rounded border border-gray-300 bg-white">
                     <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Дата</TableHead>
                                 <TableHead>Тип</TableHead>
-                                <TableHead>Сумма</TableHead>
                                 <TableHead>Категория</TableHead>
+                                <TableHead>Сумма</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <Suspense fallback={<TableRow><TableCell colSpan={4}>Загрузка...</TableCell></TableRow>}>
-                            {data ?
-                                <TableBody>
-                                    {data.map((f) => (
-                                        <TableRow key={f.id} className="hover:bg-gray-100">
-                                            <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
-                                            <TableCell>{f.type}</TableCell>
-                                            <TableCell>{f.amount?.toString() ?? "0"}</TableCell>
-                                            <TableCell>{f.category ?? "нет категории"}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                                :
-                                ''
-                            }
+                        <Suspense fallback={<TableSkeleton />}>
+                            <TableBody>
+                                {data.map((f) => (
+                                    <TableRow key={f.id} className="hover:bg-gray-100">
+                                        <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
+                                        <TableCell>{f.type}</TableCell>
+                                        <TableCell>{f.category ?? "нет категории"}</TableCell>
+                                        <TableCell>{`${f.amount?.toString()} руб.` ?? "0"}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TableCell colSpan={3}>Итого:</TableCell>
+                                    <TableCell>{Number(aggregation._sum.amount)} руб.</TableCell>
+                                </TableRow>
+                            </TableFooter>
                         </Suspense>
                     </Table>
                 </div>

@@ -41,6 +41,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
 }
 
 :root {
@@ -90,6 +91,13 @@
   --grad-border: conic-gradient(from 180deg at 50% 50%, #38bdf8, #2563eb, #4338ca, #38bdf8);
 
   /* gradients */
+
+
+  /* dashboard */
+  --income: #28a745;
+  --expense: #dc3545;
+  /* dashboard */
+
 }
 
 .dark {
@@ -136,6 +144,13 @@
   --grad-border: conic-gradient(from 180deg at 50% 50%, #0ea5e9, #1d4ed8, #3730a3, #0ea5e9);
   /* gradients */
 
+
+  /* dashboard */
+
+  --income: #71d07a;
+  --expense: #ff6b6b;
+
+  /* dashboard */
 
 }
 
@@ -353,4 +368,12 @@
     outline: 2px solid color-mix(in oklab, var(--ring), white 10%);
     outline-offset: 2px;
   }
+}
+
+@utility income-color {
+  color: var(--income);
+}
+
+@utility expense-color {
+  color: var(--expense);
 }
