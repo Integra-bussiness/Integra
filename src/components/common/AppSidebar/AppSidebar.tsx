@@ -7,8 +7,9 @@ import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu
 import { Building, ChevronDown, ChevronUp, HomeIcon, User, Users } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { memo } from "react"
 
-export default function AppSidebar() {
+export default memo(function AppSidebar() {
 
     const pathname = usePathname()
 
@@ -36,7 +37,7 @@ export default function AppSidebar() {
                     <SidebarGroup>
                         <SidebarGroupLabel asChild>
                             <CollapsibleTrigger className="flex justify-between items-center">
-                                <span>Управление заказами</span>
+                                <span>Статистика</span>
                                 <ChevronDown />
                             </CollapsibleTrigger>
                         </SidebarGroupLabel>
@@ -80,4 +81,4 @@ export default function AppSidebar() {
             </SidebarFooter>
         </Sidebar>
     )
-}
+})

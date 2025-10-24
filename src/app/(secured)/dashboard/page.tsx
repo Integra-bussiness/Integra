@@ -8,22 +8,25 @@ import {
     TableCell,
     TableFooter,
 } from "@/components/ui/table";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { BoxIcon, RussianRuble, ShoppingCart, Users2 } from "lucide-react";
 import { prisma } from "@/utils/prisma";
 import { TableSkeleton } from "@/components/common/TableSkeleton/TableSkeleton";
 import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import DashboardStats from "@/components/ux/DashboardStats/main-stats";
 
 
 
 
 export default async function DashboardPage() {
 
-    const [data, aggregation, ordersCount, clientsCount, productsCount] = await Promise.all([
+    const [data, incomeStats, expenceStats] = await Promise.all([
         prisma.finances.findMany({
             orderBy: { transaction_date: 'desc' }
         }),
 
+        // Доходы
         prisma.finances.aggregate({
             _sum: {
                 amount: true,
@@ -32,9 +35,15 @@ export default async function DashboardPage() {
                 type: "доход",
             }
         }),
-        prisma.orders.count(),
-        prisma.clients.count(),
-        prisma.products.count(),
+        // Доходы
+
+        // Расходы
+        prisma.finances.aggregate({
+            _sum: { amount: true },
+            where: { type: "расход" }
+        }),
+        // Расходы
+
     ])
 
 
@@ -44,85 +53,45 @@ export default async function DashboardPage() {
                 Dashboard
                 <p className="mt-1 text-xl text-gray-400 font-normal">Основные показатели вашего бизнеса</p>
             </TypographyH1>
-            <section className="grid grid-cols-4 gap-[20px] mt-[25px]">
-                <Card className="hover:bore">
-                    <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Выручка <RussianRuble color="grey" capHeight={25} /></CardHeader>
-                    <CardContent>
-                        <div className="font-bold text-4xl flex gap-[5px] items-center">
-                            {`${Number(aggregation._sum.amount)} руб.`}
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <span className="text-[14px] income-color">+12.5% от прошлого месяца </span>
-                    </CardFooter>
-                </Card>
-                <Card>
-                    <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Заказы <ShoppingCart color="grey" capHeight={25} /></CardHeader>
-                    <CardContent>
-                        <div className="font-bold text-4xl flex gap-[5px] items-center">
-                            {ordersCount}
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <span className="text-[14px] expense-color">-30% от прошлого месяца </span>
-                    </CardFooter>
-                </Card>
-                <Card>
-                    <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Клиенты <Users2 color="grey" capHeight={25} /></CardHeader>
-                    <CardContent>
-                        <div className="font-bold text-4xl flex gap-[5px] items-center">
-                            {clientsCount}
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <span className="text-[14px] income-color">+200% от прошлого месяца </span>
-                    </CardFooter>
-                </Card>
-                <Card>
-                    <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Товары <BoxIcon color="#99a1af" capHeight={25} /></CardHeader>
-                    <CardContent>
-                        <div className="font-bold text-4xl flex gap-[5px] items-center">
-                            {productsCount}
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <span className="text-[14px] income-color">+2 новых товара </span>
-                    </CardFooter>
-                </Card>
-            </section>
+            <DashboardStats />
             <section className="mt-[50px]">
-                <TypographyH2>Финансы</TypographyH2>
-                <div className="mt-[25px] overflow-x-auto rounded border border-gray-300 bg-white">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Дата</TableHead>
-                                <TableHead>Тип</TableHead>
-                                <TableHead>Категория</TableHead>
-                                <TableHead>Сумма</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <Suspense fallback={<TableSkeleton />}>
-                            <TableBody>
-                                {data.map((f) => (
-                                    <TableRow key={f.id} className="hover:bg-gray-100">
-                                        <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
-                                        <TableCell>{f.type}</TableCell>
-                                        <TableCell>{f.category}</TableCell>
-                                        <TableCell>{`${f.amount?.toString()} руб.`}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                            <TableFooter>
+                <Card className="pb-0 gap-0 pt-[10px]">
+                    <CardHeader className="px-[10px]">
+                        <TypographyH2 className="!pb-0 text-xl">Финансы</TypographyH2>
+                        <Separator />
+                    </CardHeader>
+                    <CardContent className="px-0">
+                        <Table>
+                            <TableHeader>
                                 <TableRow>
-                                    <TableCell colSpan={3}>Итого:</TableCell>
-                                    <TableCell>{Number(aggregation._sum.amount)} руб.</TableCell>
+                                    <TableHead>Дата</TableHead>
+                                    <TableHead>Тип</TableHead>
+                                    <TableHead>Категория</TableHead>
+                                    <TableHead>Сумма</TableHead>
                                 </TableRow>
-                            </TableFooter>
-                        </Suspense>
-                    </Table>
-                </div>
+                            </TableHeader>
+                            <Suspense fallback={<TableSkeleton />}>
+                                <TableBody>
+                                    {data.map((f) => (
+                                        <TableRow key={f.id} className="hover:bg-gray-100">
+                                            <TableCell>{f.transaction_date?.toLocaleDateString?.() ?? String(f.transaction_date)}</TableCell>
+                                            <TableCell>{f.type}</TableCell>
+                                            <TableCell>{f.category}</TableCell>
+                                            <TableCell>{`${f.amount?.toString()} руб.`}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                                <TableFooter>
+                                    <TableRow>
+                                        <TableCell colSpan={3}>Итого:</TableCell>
+                                        <TableCell>{Number(incomeStats._sum.amount) - Number(expenceStats._sum.amount)} руб.</TableCell>
+                                    </TableRow>
+                                </TableFooter>
+                            </Suspense>
+                        </Table>
+                    </CardContent>
+                </Card>
             </section>
-        </main>
+        </main >
     );
 }
