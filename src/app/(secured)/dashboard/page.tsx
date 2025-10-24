@@ -8,14 +8,11 @@ import {
     TableCell,
     TableFooter,
 } from "@/components/ui/table";
-import { Prisma, finances } from "@/generated/prisma";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { BoxIcon, ListOrdered, RussianRuble, ShoppingCart, Users2 } from "lucide-react";
+import { BoxIcon, RussianRuble, ShoppingCart, Users2 } from "lucide-react";
 import { prisma } from "@/utils/prisma";
 import { TableSkeleton } from "@/components/common/TableSkeleton/TableSkeleton";
-import { Separator } from "@/components/ui/separator";
-import { TypographyH1, TypographyH2 } from "@/components/ui/Typography";
+import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
 
 
 
