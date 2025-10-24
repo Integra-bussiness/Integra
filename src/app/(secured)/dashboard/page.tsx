@@ -49,7 +49,7 @@ export default async function DashboardPage() {
                     <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Выручка <RussianRuble color="grey" capHeight={25} /></CardHeader>
                     <CardContent>
                         <div className="font-bold text-4xl flex gap-[5px] items-center">
-                            {`${Number(aggregation._sum.amount)} руб.` ?? 'Ошибка подсчета'}
+                            {`${Number(aggregation._sum.amount)} руб.`}
                         </div>
                     </CardContent>
                     <CardFooter>
@@ -60,7 +60,7 @@ export default async function DashboardPage() {
                     <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Заказы <ShoppingCart color="grey" capHeight={25} /></CardHeader>
                     <CardContent>
                         <div className="font-bold text-4xl flex gap-[5px] items-center">
-                            {ordersCount ?? 'Ошибка подсчета'}
+                            {ordersCount}
                         </div>
                     </CardContent>
                     <CardFooter>
@@ -71,7 +71,7 @@ export default async function DashboardPage() {
                     <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Клиенты <Users2 color="grey" capHeight={25} /></CardHeader>
                     <CardContent>
                         <div className="font-bold text-4xl flex gap-[5px] items-center">
-                            {clientsCount ?? 'Ошибка подсчета'}
+                            {clientsCount}
                         </div>
                     </CardContent>
                     <CardFooter>
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
                     <CardHeader className="flex justify-between items-center text-gray-400 font-bold">Товары <BoxIcon color="#99a1af" capHeight={25} /></CardHeader>
                     <CardContent>
                         <div className="font-bold text-4xl flex gap-[5px] items-center">
-                            {productsCount ?? 'Ошибка подсчета'}
+                            {productsCount}
                         </div>
                     </CardContent>
                     <CardFooter>
