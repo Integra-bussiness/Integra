@@ -30,7 +30,7 @@ export default async function Clients() {
                         </InputGroupAddon>
                         <InputGroupInput placeholder="Поиск клиентов..." />
                         <InputGroupAddon align='inline-end'>
-                            <InputGroupButton variant="secondary">Search</InputGroupButton>
+                            <InputGroupButton variant="secondary">Искать</InputGroupButton>
                         </InputGroupAddon>
                     </InputGroup>
                 </CardContent>
