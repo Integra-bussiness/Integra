@@ -17,15 +17,15 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { FormEvent, useState } from "react"
-import { useRouter } from "next/navigation"
+import { redirect, useRouter } from "next/navigation"
 import { Loader } from "lucide-react"
 import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
 
 export function LoginForm({
-                              className,
-                              ...props
-                          }: React.ComponentProps<"div">) {
+    className,
+    ...props
+}: React.ComponentProps<"div">) {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
@@ -55,9 +55,8 @@ export function LoginForm({
         }
 
         toast.success("Авторизация успешна!")
-        router.push('/dashboard')
-        router.refresh()
         setLoading(false)
+        redirect('/dashboard')
     };
 
     return (
@@ -100,9 +99,6 @@ export function LoginForm({
                                 <Button disabled={loading} type="submit">
                                     Войти {loading ? <Loader className="animate-spin" /> : null}
                                 </Button>
-                                <FieldDescription className="text-center">
-                                    Нет аккаунта? <a href="/register">Регистрация</a>
-                                </FieldDescription>
                             </Field>
                         </FieldGroup>
                     </form>

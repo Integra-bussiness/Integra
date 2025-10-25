@@ -4,7 +4,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
-import { Building, ChevronDown, ChevronUp, HomeIcon, User, Users } from "lucide-react"
+import { Briefcase, Building, ChevronDown, ChevronUp, Contact, Database, HomeIcon, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { memo } from "react"
@@ -13,16 +13,32 @@ export default memo(function AppSidebar() {
 
     const pathname = usePathname()
 
-    const items = [
+    const collapsible = [
         {
-            title: 'Главная',
-            url: "/dashboard",
-            icon: HomeIcon
-        },
-        {
-            title: 'CRM',
-            url: "/clients",
-            icon: Users
+            title: 'Статистика',
+            items: [
+                {
+                    title: 'Главная',
+                    url: "/dashboard",
+                    icon: HomeIcon
+                },
+                {
+                    title: 'CRM',
+                    url: "/clients",
+                    icon: Contact
+                },
+                {
+                    title: 'Структура',
+                    url: "/structure",
+                    icon: Database
+                },
+                {
+                    title: 'Сотрудники',
+                    url: "/users",
+                    icon: Briefcase
+                }
+
+            ]
         }
     ]
 
@@ -30,35 +46,39 @@ export default memo(function AppSidebar() {
         <Sidebar collapsible="icon">
             <SidebarHeader className="font-bold font text-xl flex gap-[10px] items-center flex-row">
                 <Building />
-                <span >Integra</span>
+                <span className="group-data-[state=collapsed]:hidden">Integra</span>
             </SidebarHeader>
             <SidebarContent>
-                <Collapsible defaultOpen>
-                    <SidebarGroup>
-                        <SidebarGroupLabel asChild>
-                            <CollapsibleTrigger className="flex justify-between items-center">
-                                <span>Статистика</span>
-                                <ChevronDown />
-                            </CollapsibleTrigger>
-                        </SidebarGroupLabel>
-                        <CollapsibleContent>
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    {items.map((item) => (
-                                        <SidebarMenuItem key={item.title} >
-                                            <SidebarMenuButton asChild isActive={item.url === pathname}>
-                                                <Link href={item.url}>
-                                                    <item.icon />
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </SidebarMenuItem>
-                                    ))}
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </CollapsibleContent>
-                    </SidebarGroup>
-                </Collapsible>
+                {collapsible.map((collapse) => {
+                    return (
+                        <Collapsible defaultOpen key={collapse.title}>
+                            <SidebarGroup>
+                                <SidebarGroupLabel asChild>
+                                    <CollapsibleTrigger className="flex justify-between items-center">
+                                        <span>{collapse.title}</span>
+                                        <ChevronDown />
+                                    </CollapsibleTrigger>
+                                </SidebarGroupLabel>
+                                <CollapsibleContent>
+                                    <SidebarGroupContent>
+                                        <SidebarMenu>
+                                            {collapse.items.map((item) => (
+                                                <SidebarMenuItem key={item.title} >
+                                                    <SidebarMenuButton asChild isActive={item.url === pathname}>
+                                                        <Link href={item.url}>
+                                                            <item.icon />
+                                                            <span>{item.title}</span>
+                                                        </Link>
+                                                    </SidebarMenuButton>
+                                                </SidebarMenuItem>
+                                            ))}
+                                        </SidebarMenu>
+                                    </SidebarGroupContent>
+                                </CollapsibleContent>
+                            </SidebarGroup>
+                        </Collapsible>
+                    )
+                })}
             </SidebarContent>
             <SidebarFooter>
                 <SidebarMenu>
