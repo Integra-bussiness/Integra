@@ -41,13 +41,13 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
     }
 
     return (
-        <div className="">
-            <TypographyH1>
+        <div className="mt-6 grid grid-cols-3">
+            <TypographyH1 className="col-span-full">
                 Сотрудники
                 <p className="mt-0 text-xl text-gray-400 font-normal">Информация о действиях сотрудников</p>
             </TypographyH1>
 
-            <Card className="pb-0 gap-0 pt-[10px]">
+            <Card className="pb-0 col-span-2 gap-0 pt-[10px]">
                 <CardHeader className="px-[10px]">
                     <TypographyH2 className="!pb-0 text-xl">Список сотрудников</TypographyH2>
                     <Separator />
