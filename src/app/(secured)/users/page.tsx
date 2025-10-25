@@ -13,16 +13,22 @@ export default async function UsersPage() {
 
     if (!result.success) {
         return (
-            <Card className="p-4 text-red-600 bg-red-50 rounded">
-                <CardHeader className="">
-                    Не удалось получить данные
-                </CardHeader>
-                <CardContent>
-                    <span>
-                        {result.error instanceof Error ? result.error.message : String(result.error)}
-                    </span>
-                </CardContent>
-            </Card>
+            <div>
+                <TypographyH1>
+                    Сотрудники
+                    <p className="mt-0 text-xl text-gray-400 font-normal">Информация о действиях сотрудников</p>
+                </TypographyH1>
+                <Card className="p-4 text-red-600 bg-red-50 rounded mt-[25px]">
+                    <CardHeader className="">
+                        Не удалось получить данные
+                    </CardHeader>
+                    <CardContent>
+                        <span>
+                            {result.error instanceof Error ? result.error.message : String(result.error)}
+                        </span>
+                    </CardContent>
+                </Card>
+            </div>
         )
     }
 
