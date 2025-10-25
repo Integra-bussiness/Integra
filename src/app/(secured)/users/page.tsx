@@ -14,6 +14,11 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
     const currentPage = page ? Number(page) : 1;
     const result = await getUsers(currentPage, 25)
 
+    console.log(result);
+    console.log(currentPage);
+
+
+
     if (!result.success) {
         return (
             <div>
@@ -50,11 +55,11 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Стобец 1</TableHead>
-                            <TableHead>Стобец 2</TableHead>
-                            <TableHead>Стобец 3</TableHead>
-                            <TableHead>Стобец 4</TableHead>
-                            <TableHead>Стобец 5</TableHead>
+                            <TableHead>ID</TableHead>
+                            <TableHead>Название отдела</TableHead>
+                            <TableHead>ФИО</TableHead>
+                            <TableHead>Должность</TableHead>
+                            <TableHead>Активность</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
