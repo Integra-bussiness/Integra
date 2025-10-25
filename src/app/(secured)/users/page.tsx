@@ -80,13 +80,13 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                     <TableFooter>
                         <TableRow>
                             <TableCell colSpan={2}>
-                                <Button asChild>
-                                    <Link href={'?page=1'}>Предыдущая страница</Link>
+                                <Button asChild disabled={currentPage <= 1}>
+                                    <Link href={`?page=${currentPage - 1}`}>Предыдущая страница</Link>
                                 </Button>
                             </TableCell>
                             <TableCell colSpan={2}>
                                 <Button asChild>
-                                    <Link href={'?page=2'}>Предыдущая страница</Link>
+                                    <Link href={`?page=${currentPage + 1}`}>Предыдущая страница</Link>
                                 </Button>
                             </TableCell>
                         </TableRow>
