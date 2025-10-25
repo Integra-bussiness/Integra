@@ -4,7 +4,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
-import { Building, ChevronDown, ChevronUp, Database, HomeIcon, User, Users } from "lucide-react"
+import { Briefcase, Building, ChevronDown, ChevronUp, Contact, Database, HomeIcon, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { memo } from "react"
@@ -13,27 +13,9 @@ export default memo(function AppSidebar() {
 
     const pathname = usePathname()
 
-    const items = [
+    const collapsible = [
         {
-            title: 'Главная',
-            url: "/dashboard",
-            icon: HomeIcon
-        },
-        {
-            title: 'CRM',
-            url: "/clients",
-            icon: Users
-        },
-        {
-            title: 'Структура',
-            url: "/structure",
-            icon: Users
-        }
-    ]
-
-    const collapsibleItems = [
-        {
-            collapseTitle: 'Статистика',
+            title: 'Статистика',
             items: [
                 {
                     title: 'Главная',
@@ -43,32 +25,38 @@ export default memo(function AppSidebar() {
                 {
                     title: 'CRM',
                     url: "/clients",
-                    icon: Users
+                    icon: Contact
                 },
                 {
                     title: 'Структура',
                     url: "/structure",
                     icon: Database
+                },
+                {
+                    title: 'Сотрудники',
+                    url: "/users",
+                    icon: Briefcase
                 }
-            ]
-        },
 
+            ]
+        }
     ]
+
 
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader className="font-bold font text-xl flex gap-[10px] items-center flex-row">
                 <Building />
-                <span >Integra</span>
+                <span className="group-data-[state=collapsed]:hidden">Integra</span>
             </SidebarHeader>
             <SidebarContent>
-                {collapsibleItems.map((collapse) => {
+                {collapsible.map((collapse) => {
                     return (
-                        <Collapsible defaultOpen key={collapse.collapseTitle}>
+                        <Collapsible defaultOpen key={collapse.title}>
                             <SidebarGroup>
                                 <SidebarGroupLabel asChild>
                                     <CollapsibleTrigger className="flex justify-between items-center">
-                                        <span>{collapse.collapseTitle}</span>
+                                        <span>{collapse.title}</span>
                                         <ChevronDown />
                                     </CollapsibleTrigger>
                                 </SidebarGroupLabel>
