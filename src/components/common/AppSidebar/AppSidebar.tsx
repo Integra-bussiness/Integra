@@ -4,11 +4,12 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
-import { Building, ChevronDown, ChevronUp, HomeIcon, User, Users } from "lucide-react"
+import { Building, ChevronDown, ChevronUp, Database, HomeIcon, User, Users } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { memo } from "react"
 
-export default function AppSidebar() {
+export default memo(function AppSidebar() {
 
     const pathname = usePathname()
 
@@ -22,7 +23,36 @@ export default function AppSidebar() {
             title: 'CRM',
             url: "/clients",
             icon: Users
+        },
+        {
+            title: 'Структура',
+            url: "/structure",
+            icon: Users
         }
+    ]
+
+    const collapsibleItems = [
+        {
+            collapseTitle: 'Статистика',
+            items: [
+                {
+                    title: 'Главная',
+                    url: "/dashboard",
+                    icon: HomeIcon
+                },
+                {
+                    title: 'CRM',
+                    url: "/clients",
+                    icon: Users
+                },
+                {
+                    title: 'Структура',
+                    url: "/structure",
+                    icon: Database
+                }
+            ]
+        },
+
     ]
 
     return (
@@ -32,32 +62,36 @@ export default function AppSidebar() {
                 <span >Integra</span>
             </SidebarHeader>
             <SidebarContent>
-                <Collapsible defaultOpen>
-                    <SidebarGroup>
-                        <SidebarGroupLabel asChild>
-                            <CollapsibleTrigger className="flex justify-between items-center">
-                                <span>Управление заказами</span>
-                                <ChevronDown />
-                            </CollapsibleTrigger>
-                        </SidebarGroupLabel>
-                        <CollapsibleContent>
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    {items.map((item) => (
-                                        <SidebarMenuItem key={item.title} >
-                                            <SidebarMenuButton asChild isActive={item.url === pathname}>
-                                                <Link href={item.url}>
-                                                    <item.icon />
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </SidebarMenuItem>
-                                    ))}
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </CollapsibleContent>
-                    </SidebarGroup>
-                </Collapsible>
+                {collapsibleItems.map((collapse) => {
+                    return (
+                        <Collapsible defaultOpen key={collapse.collapseTitle}>
+                            <SidebarGroup>
+                                <SidebarGroupLabel asChild>
+                                    <CollapsibleTrigger className="flex justify-between items-center">
+                                        <span>{collapse.collapseTitle}</span>
+                                        <ChevronDown />
+                                    </CollapsibleTrigger>
+                                </SidebarGroupLabel>
+                                <CollapsibleContent>
+                                    <SidebarGroupContent>
+                                        <SidebarMenu>
+                                            {collapse.items.map((item) => (
+                                                <SidebarMenuItem key={item.title} >
+                                                    <SidebarMenuButton asChild isActive={item.url === pathname}>
+                                                        <Link href={item.url}>
+                                                            <item.icon />
+                                                            <span>{item.title}</span>
+                                                        </Link>
+                                                    </SidebarMenuButton>
+                                                </SidebarMenuItem>
+                                            ))}
+                                        </SidebarMenu>
+                                    </SidebarGroupContent>
+                                </CollapsibleContent>
+                            </SidebarGroup>
+                        </Collapsible>
+                    )
+                })}
             </SidebarContent>
             <SidebarFooter>
                 <SidebarMenu>
@@ -80,4 +114,4 @@ export default function AppSidebar() {
             </SidebarFooter>
         </Sidebar>
     )
-}
+})
