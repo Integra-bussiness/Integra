@@ -6,16 +6,13 @@ import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 
-export default async function UsersPage({ searchParams }: { searchParams: { page?: string } }) {
+export default async function UsersPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
 
 
 
-    const page = searchParams.page ? Number(searchParams.page) : 1;
-    const result = await getUsers(page, 25)
-
-
-    console.log(result);
-
+    const { page } = await searchParams;
+    const currentPage = page ? Number(page) : 1;
+    const result = await getUsers(currentPage, 25)
 
     if (!result.success) {
         return (
