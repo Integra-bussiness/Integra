@@ -8,44 +8,43 @@ import {
     TableCell,
     TableFooter,
 } from "@/components/ui/table";
-import { BoxIcon, RussianRuble, ShoppingCart, Users2 } from "lucide-react";
 import { prisma } from "@/utils/prisma";
 import { TableSkeleton } from "@/components/common/TableSkeleton/TableSkeleton";
 import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import DashboardStats from "@/components/ux/DashboardStats/main-stats";
+import { unstable_cache } from "next/cache";
 
 
 
 
 export default async function DashboardPage() {
 
-    const [data, incomeStats, expenceStats] = await Promise.all([
-        prisma.finances.findMany({
-            orderBy: { transaction_date: 'desc' }
-        }),
+    const getDashboardData = unstable_cache(
+        async () => {
+            const [data, incomeStats, expenceStats] = await Promise.all([
+                prisma.finances.findMany({
+                    orderBy: { transaction_date: 'desc' }
+                }),
+                prisma.finances.aggregate({
+                    _sum: { amount: true },
+                    where: { type: "доход" }
+                }),
+                prisma.finances.aggregate({
+                    _sum: { amount: true },
+                    where: { type: "расход" }
+                }),
+            ]);
 
-        // Доходы
-        prisma.finances.aggregate({
-            _sum: {
-                amount: true,
-            },
-            where: {
-                type: "доход",
-            }
-        }),
-        // Доходы
+            return { data, incomeStats, expenceStats };
+        },
+        ['dashboard-data'], // один ключ для всего
+        { revalidate: 60 }
+    );
 
-        // Расходы
-        prisma.finances.aggregate({
-            _sum: { amount: true },
-            where: { type: "расход" }
-        }),
-        // Расходы
 
-    ])
-
+    const { data, incomeStats, expenceStats } = await getDashboardData()
 
     return (
         <main>
@@ -55,9 +54,9 @@ export default async function DashboardPage() {
             </TypographyH1>
             <DashboardStats />
             <section className="mt-[50px]">
-                <Card className="pb-0 gap-0 pt-[10px]">
-                    <CardHeader className="px-[10px]">
-                        <TypographyH2 className="!pb-0 text-xl">Финансы</TypographyH2>
+                <Card className="pb-0 gap-0 pt-2.5">
+                    <CardHeader className="pt-2.5">
+                        <TypographyH2 className="pb-0! text-xl">Финансы</TypographyH2>
                         <Separator />
                     </CardHeader>
                     <CardContent className="px-0">

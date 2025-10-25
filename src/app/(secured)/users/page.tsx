@@ -1,5 +1,6 @@
 import getUsers from "@/actions/getUsers"
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 
@@ -37,7 +38,32 @@ export default async function UsersPage() {
                     <TypographyH2 className="!pb-0 text-xl">Список сотрудников</TypographyH2>
                     <Separator />
                 </CardHeader>
-
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Стобец 1</TableHead>
+                            <TableHead>Стобец 2</TableHead>
+                            <TableHead>Стобец 3</TableHead>
+                            <TableHead>Стобец 4</TableHead>
+                            <TableHead>Стобец 5</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {result.data &&
+                            result.data.map((user) => {
+                                return (
+                                    <TableRow key={user.name + user.id}>
+                                        <TableCell>{user.id}</TableCell>
+                                        <TableCell>{user.companies?.name}</TableCell>
+                                        <TableCell>{user.name}</TableCell>
+                                        <TableCell>{user.role}</TableCell>
+                                        <TableCell>{user.status}</TableCell>
+                                    </TableRow>
+                                )
+                            })
+                        }
+                    </TableBody>
+                </Table>
             </Card>
 
         </div>
