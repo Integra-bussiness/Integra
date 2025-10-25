@@ -79,14 +79,12 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={2}>
+                            <TableCell colSpan={5} className="py-10 flex gap-30 justify-center">
                                 <Button asChild disabled={currentPage <= 1}>
                                     <Link href={`?page=${currentPage - 1}`}>Предыдущая страница</Link>
                                 </Button>
-                            </TableCell>
-                            <TableCell colSpan={2}>
                                 <Button asChild>
-                                    <Link href={`?page=${currentPage + 1}`}>Предыдущая страница</Link>
+                                    <Link href={`?page=${currentPage + 1}`}>Следующая страница</Link>
                                 </Button>
                             </TableCell>
                         </TableRow>
