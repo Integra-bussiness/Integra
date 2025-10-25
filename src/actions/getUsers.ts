@@ -4,7 +4,9 @@ import { prisma } from "@/utils/prisma"
 const getUsersDataCached = (page: number, pageSize: number) =>
     unstable_cache(
         async () => {
-            const skip = (page - 1) * pageSize;
+            const currPage = page && page > 0 ? page : 1;
+            const currPageSize = pageSize && pageSize > 0 ? pageSize : 25;
+            const skip = (currPage - 1) * currPageSize;
 
             return prisma.users.findMany({
                 skip: skip,
@@ -19,7 +21,7 @@ const getUsersDataCached = (page: number, pageSize: number) =>
 
 export default async function getUsersData(page: number = 1, pageSize: number = 25) {
     try {
-        const getData = await getUsersDataCached(page, pageSize)
+        const getData = getUsersDataCached(page, pageSize)
         const users = await getData()
 
         return { success: true, data: users }

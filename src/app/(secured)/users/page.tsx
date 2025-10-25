@@ -1,12 +1,18 @@
 import getUsers from "@/actions/getUsers"
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import Link from "next/link";
 
-export default async function UsersPage() {
+export default async function UsersPage({ searchParams }: { searchParams: { page?: string } }) {
 
-    const result = await getUsers()
+
+
+    const page = searchParams.page ? Number(searchParams.page) : 1;
+    const result = await getUsers(page, 25)
+
 
     console.log(result);
 
@@ -69,10 +75,24 @@ export default async function UsersPage() {
                             })
                         }
                     </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell colSpan={2}>
+                                <Button asChild>
+                                    <Link href={'?page=1'}>Предыдущая страница</Link>
+                                </Button>
+                            </TableCell>
+                            <TableCell colSpan={2}>
+                                <Button asChild>
+                                    <Link href={'?page=2'}>Предыдущая страница</Link>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </Card>
 
-        </div>
+        </div >
     )
 
 }
