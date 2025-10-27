@@ -11,7 +11,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
 
     const { page } = await searchParams;
     const currentPage = page ? Number(page) : 1;
-    const result = await getUsers(currentPage, 5)
+    const result = await getUsers(currentPage, 10)
 
     console.log(result);
     console.log(currentPage);
