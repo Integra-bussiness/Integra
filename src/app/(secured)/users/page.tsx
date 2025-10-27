@@ -3,19 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
+import ActivityLogs from "@/components/ux/activity-logs/ActivityLogs";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 
 export default async function UsersPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
 
-
-
     const { page } = await searchParams;
     const currentPage = page ? Number(page) : 1;
-    const result = await getUsers(currentPage, 25)
+    const result = await getUsers(currentPage, 5)
 
     console.log(result);
     console.log(currentPage);
+    console.log(result.data?.totalPages)
 
     if (!result.success) {
         return (
@@ -39,13 +39,13 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
     }
 
     return (
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-3 gap-[25px]">
             <TypographyH1 className="col-span-full">
                 Сотрудники
                 <p className="mt-0 text-xl text-gray-400 font-normal">Информация о действиях сотрудников</p>
             </TypographyH1>
 
-            <Card className=" mt-6 pb-0 col-span-2 gap-0 pt-2.5">
+            <Card className="pb-0 col-span-2 gap-0 pt-2.5">
                 <CardHeader className="px-[10px]">
                     <TypographyH2 className="!pb-0 text-xl">Список сотрудников</TypographyH2>
                     <Separator />
@@ -62,7 +62,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                     </TableHeader>
                     <TableBody>
                         {result.data &&
-                            result.data.map((user) => {
+                            result.data.users.map((user) => {
                                 return (
                                     <TableRow key={user.name + user.id}>
                                         <TableCell>{user.id}</TableCell>
@@ -91,6 +91,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                     </TableFooter>
                 </Table>
             </Card>
+            <ActivityLogs />
 
         </div >
     )
