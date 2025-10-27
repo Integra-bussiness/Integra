@@ -17,8 +17,6 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
     console.log(result);
     console.log(currentPage);
 
-
-
     if (!result.success) {
         return (
             <div>
