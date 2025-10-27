@@ -15,7 +15,7 @@ const getUsersDataCached = (page: number, pageSize: number) =>
                 orderBy: { id: "asc" }
             });
         },
-        ['users-data'],
+        [`users-data-page-${page}-size-${pageSize}`],
         { revalidate: 60 }
     );
 
