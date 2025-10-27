@@ -6,7 +6,7 @@ import { prisma } from "@/utils/prisma";
 
 export default async function ActivityLogs() {
 
-    const logs = await prisma.activity_logs.findMany({})
+    const logs = await prisma.activity_logs.findMany()
 
     return (
         <Card className="pt-2.5 row-span-2">
@@ -25,7 +25,7 @@ export default async function ActivityLogs() {
                     <TableBody>
                         {logs.map(log => {
                             return (
-                                <TableRow key={log.id + log.user_id}>
+                                <TableRow key={log.id}>
                                     <TableCell>{log.user_id}</TableCell>
                                     <TableCell>{log.action}</TableCell>
                                     <TableCell>{log.details}</TableCell>
