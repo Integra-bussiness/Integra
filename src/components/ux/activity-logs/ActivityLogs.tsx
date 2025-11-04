@@ -9,7 +9,7 @@ export default async function ActivityLogs() {
     const logs = await prisma.activity_logs.findMany()
 
     return (
-        <Card className="pt-2.5 row-span-2">
+        <Card className="pt-2.5">
             <CardHeader className="px-[10px]">
                 <TypographyH2 className="!pb-0 text-xl">Последние активности</TypographyH2>
             </CardHeader>

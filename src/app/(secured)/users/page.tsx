@@ -1,6 +1,7 @@
 import getUsers from "@/actions/getUsers"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
 import ActivityLogs from "@/components/ux/activity-logs/ActivityLogs";
@@ -13,9 +14,8 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
     const currentPage = page ? Number(page) : 1;
     const result = await getUsers(currentPage, 10)
 
-    console.log(result);
-    console.log(currentPage);
-    console.log(result.data?.totalPages)
+    console.log(page, currentPage, result.data?.totalPages);
+
 
     if (!result.success) {
         return (
@@ -78,6 +78,25 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                     <TableFooter>
                         <TableRow>
                             <TableCell colSpan={5}>
+                                <Pagination>
+                                    <PaginationContent>
+                                        <PaginationItem>
+                                            <PaginationPrevious href={`?page=${currentPage - 1}`} />
+                                        </PaginationItem>
+                                        <PaginationItem>
+                                            {Array.from({ length: 3 }).map((_, index) => (
+                                                <PaginationLink key={index} isActive={(currentPage + index) === Number(page)} href={`?page=${currentPage + index}`}>
+                                                    {currentPage + index}
+                                                </PaginationLink>
+                                            ))}
+                                        </PaginationItem>
+                                        <PaginationItem>
+                                            <PaginationNext href={`?page=${currentPage + 1}`} />
+                                        </PaginationItem>
+                                    </PaginationContent>
+                                </Pagination>
+                            </TableCell>
+                            {/* <TableCell colSpan={5}>
                                 <div className="flex gap-6 justify-center">
                                     <Button asChild disabled={currentPage <= 1}>
                                         <Link href={`?page=${currentPage - 1}`}>Предыдущая страница</Link>
@@ -86,7 +105,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                                         <Link href={`?page=${currentPage + 1}`}>Следующая страница</Link>
                                     </Button>
                                 </div>
-                            </TableCell>
+                            </TableCell> */}
                         </TableRow>
                     </TableFooter>
                 </Table>

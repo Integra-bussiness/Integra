@@ -4,7 +4,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
-import { Briefcase, Building, ChevronDown, ChevronUp, Contact, Database, HomeIcon, User } from "lucide-react"
+import { Boxes, Briefcase, Building, ChevronDown, ChevronUp, Contact, Database, HomeIcon, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { memo } from "react"
@@ -36,8 +36,12 @@ export default memo(function AppSidebar() {
                     title: 'Сотрудники',
                     url: "/users",
                     icon: Briefcase
+                },
+                {
+                    title: 'Товары',
+                    url: "/products",
+                    icon: Boxes
                 }
-
             ]
         }
     ]

@@ -39,7 +39,7 @@ export default async function DashboardPage() {
 
             return { data, incomeStats, expenceStats };
         },
-        ['dashboard-data'], // один ключ для всего
+        ['dashboard-data'],
         { revalidate: 60 }
     );
 
