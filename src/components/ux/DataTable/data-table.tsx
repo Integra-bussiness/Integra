@@ -40,9 +40,9 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
                                 <div className="flex gap-1">
                                     {flexRender(header.column.columnDef.header, header.getContext())}
                                     {{
-                                        asc: <ChevronUp />,
-                                        desc: <ChevronDown />
-                                    }[header.column.getIsSorted() as string] ?? <ListFilter />}
+                                        asc: <ChevronUp size={20} />,
+                                        desc: <ChevronDown size={20} />
+                                    }[header.column.getIsSorted() as string] ?? <div className="w-5" />}
                                 </div>
                             </TableHead>
                         ))}
