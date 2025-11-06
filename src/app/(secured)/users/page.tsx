@@ -1,12 +1,10 @@
 import getUsers from "@/actions/getUsers"
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
 import ActivityLogs from "@/components/ux/activity-logs/ActivityLogs";
 import { Separator } from "@radix-ui/react-dropdown-menu";
-import Link from "next/link";
 
 export default async function UsersPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
 

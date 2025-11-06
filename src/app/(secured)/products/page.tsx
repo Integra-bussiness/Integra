@@ -1,7 +1,10 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { TypographyH1 } from "@/components/ui/typography"
+import DataTable from "@/components/ux/DataTable/data-table"
+import { products } from "@/generated/prisma"
 import { prisma } from "@/utils/prisma"
 import { BoxIcon } from "lucide-react"
+import { columns } from "./columns"
 
 export default async function ProductsPage() {
 
@@ -16,6 +19,7 @@ export default async function ProductsPage() {
     )
 
     const outOfStock = productsCount - productsAvailable
+
 
     return (
         <div>
@@ -56,6 +60,8 @@ export default async function ProductsPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            <DataTable columns={columns} data={products} />
         </div>
     )
 }
