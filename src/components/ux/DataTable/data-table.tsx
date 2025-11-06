@@ -39,9 +39,9 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
                             >
                                 {flexRender(header.column.columnDef.header, header.getContext())}
                                 {{
-                                    asc: <ChevronUp />,
+                                    asc: <ChevronUp className="absolute right-[-10px]" />,
                                     desc: <ChevronDown />
-                                }[header.column.getIsSorted() as string] ?? null}
+                                }[header.column.getIsSorted() as string] ?? ''}
                             </TableHead>
                         ))}
                     </TableRow>
