@@ -35,11 +35,11 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
                             <TableHead
                                 key={header.id}
                                 onClick={header.column.getToggleSortingHandler()}
-                                className="cursor-pointer select-none"
+                                className="cursor-pointer select-none flex gap-1"
                             >
                                 {flexRender(header.column.columnDef.header, header.getContext())}
                                 {{
-                                    asc: <ChevronUp className="absolute right-[-10px]" />,
+                                    asc: <ChevronUp />,
                                     desc: <ChevronDown />
                                 }[header.column.getIsSorted() as string] ?? ''}
                             </TableHead>
