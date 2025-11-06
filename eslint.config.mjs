@@ -10,7 +10,6 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  // Игнорируем файлы ПЕРВЫМ блоком (это важно!)
   {
     ignores: [
       '**/node_modules/**',

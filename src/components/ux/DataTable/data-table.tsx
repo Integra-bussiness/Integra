@@ -3,7 +3,7 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, ListFilter } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -42,7 +42,7 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
                                     {{
                                         asc: <ChevronUp />,
                                         desc: <ChevronDown />
-                                    }[header.column.getIsSorted() as string] ?? ''}
+                                    }[header.column.getIsSorted() as string] ?? <ListFilter />}
                                 </div>
                             </TableHead>
                         ))}
