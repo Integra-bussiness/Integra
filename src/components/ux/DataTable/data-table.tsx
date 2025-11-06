@@ -26,7 +26,7 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
     })
 
     return (
-        <Table>
+        <Table className="mt-[25px]">
             <TableHeader>
                 {table.getHeaderGroups().map(headerGroup => (
                     <TableRow key={headerGroup.id}>
